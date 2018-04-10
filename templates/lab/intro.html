@@ -1,0 +1,301 @@
+{{extends "layout_admin.html"}}
+{{block title()}}API 소개{{end}}
+{{block localCSS()}}
+<style>
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>Open API 통합평가</h1>
+{{end}}
+
+{{block body()}}
+
+<p>일반 사용자의 요청(Request)에 따라 아래 3가지 분석결과를 리턴(Response) 해주는 API</p>
+<ol>
+  <li>형태소 분석 API : 사용자가 요청(Request)한 텍스트의 형태소를 분석하여 결과를 리턴(Response) 해주는 API</li>
+  <li>계량요인 추출 API : 사용자가 요청(Request)한 텍스트의 계량평가요인을 분석하여 결과를 리턴(Response) 해주는 API</li>
+  <li>트러스트 알고리즘 API : 사용자가 요청(Request)한 텍스트를 트러스트 알고리즘으로 분석하여 트러스트 점수결과를 리턴(Response) 해주는 API</li>
+</ol>
+<p>
+  트러스트 점수결과란? 
+<br>
+  언론재단 뉴스트러스트 위원회에서 정한 트러스트 알고리즘에 따라 기사를 평가한 점수결과
+</p>
+
+<h4>
+  Open API 통합평가 이용방법
+</h4>
+<p>
+  : 제목, 본문에 텍스트를 입력 후 전송한다.
+</p>
+
+<br>
+<h3>RESTful API 이용방법</h3>
+<h4>
+  1. 형태소 분석 API : http://newstrust.kr/api/postagging
+</h4>
+<br>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+	<thead>
+	  <tr>
+		<th>Field Name</th>
+		<th>Type</th>
+		<th>Description</th>
+		<th>M/O(필수/옵션)</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr>
+		<th colspan="4" class="text-center">HEADERs</th>
+	  </tr>
+	  <tr>
+		<td>Content-Type</td>
+		<td>CHARs</td>
+		<td>application/json(요청이 성공인경우)</td>
+		<td>O</td>
+	  </tr>
+	  <tr>
+		<td>Content-Length</td>
+		<td></td>
+		<td>BODY 파트 길이</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<th colspan="4" class="text-center">BODY</th>
+	  </tr>
+	  <tr>
+		<td>input</td>
+		<td>CHARs</td>
+		<td>입력 문장</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>result</td>
+		<td>array</td>
+		<td>
+			형태소 분석 결과<br>
+			word: 분리된 텍스트, pos: 품사                
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>unknown_words</td>
+		<td>array</td>
+		<td>처리안된 문장</td>
+		<td>O</td>
+	  </tr>
+	  <tr>
+		  <th colspan="4" class="text-center">BODY 파트 예시<th>
+	  </tr>
+	  <tr>
+		<td colspan="4">
+		  <pre>
+{ 
+  “input”: “입력 문장”,
+  “result”: [{“word”:“입력”, “pos”:”명사”}, {“word”:”문장”,“pos”:”명사”}],
+  “unknown_words”: []
+}
+				
+		  </pre>
+		</td>
+	  </tr>
+	</tbody>
+  </table>  
+</div>
+<br>
+<h4>
+  2. 계량요인 추출 API : http://newstrust.kr/api/metric
+</h4>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+	<thead>
+	  <tr>
+		<th>Field Name</th>
+		<th>Type</th>
+		<th>Description</th>
+		<th>M/O(필수/옵션)</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr>
+		<th colspan="4" class="text-center">HEADERs</th>
+	  </tr>
+	  <tr>
+		<td>Content-Type</td>
+		<td>CHARs</td>
+		<td>application/json(요청이 성공인경우)</td>
+		<td>O</td>
+	  </tr>
+	  <tr>
+		<td>Content-Length</td>
+		<td></td>
+		<td>BODY 파트 길이</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<th colspan="4" class="text-center">BODY</th>
+	  </tr>
+	  <tr>
+		<td>sanitized_title</td>
+		<td>CHARs</td>
+		<td>
+		  군더더기 제거된 제목
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>sanitized_content</td>
+		<td>CHARs</td>
+		<td>
+		  군더더기 제거된 본문
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>postagging</td>
+		<td>JSON array</td>
+		<td>
+		  형태소 분석 결과 { line: “분리된 문장", tags:[ {word:”단어", pos:”품사" }, {word:”단어", pos:”품사" }
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>category</td>
+		<td>CHARs</td>
+		<td>
+		  예상 카테고리
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>entities</td>
+		<td>array</td>
+		<td>
+		  개체명 추출 결과
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<td>meric</td>
+		<td>JSON</td>
+		<td>
+		  계량요인별 점수
+		  <br>
+		  바이라인:byline, <br>기사길이:content_length, <br>이미지수:image_count, <br>수치인용수:number_count, <br>제목에느낌표따옴표수:title_punc_count, <br>문장당평균부사수:avg_adverbs_per_sentence, <br>인용문수:quote_count, <br>문장당인용문수:quotes_per_content
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		  <th colspan="4" class="text-center">BODY 파트 예시<th>
+	  </tr>
+	  <tr>
+		<td colspan="4">
+		  <pre>
+{
+  sanitized_title: “군더더기 제거된 제목",
+  sanitized_content: “군더더기 제거된 본문",
+  postagging: [ { line: “분리된 문장", tags:[ {word:”단어", pos:”품사" }, {word:”단어", pos:”품사" } ],
+	  { line: “분리된 문장", tags:[ {word:”단어", pos:”품사" }, {word:”단어", pos:”품사" } ],
+	  ….
+  },
+  category: “예상 카테고리",
+  entities: [ “개체명1":”인명", “개체명2":”지명", ... ],
+  metric: {
+  content_length:1, image_count:1, number_count:1, title_punc_count:1, avg_adverbs_per_sentence:1, quote_count:1, quotes_per_content:1, ….
+	  }
+  } ] 
+}
+		  </pre>
+		</td>
+	  </tr>
+	</tbody>
+  </table>  
+</div>
+<br>
+<h4>
+  3. 트러스트 알고리즘 API : http://newstrust.kr/api/trust
+</h4>
+<div class="table-responsive"></div>
+  <table class="table table-bordered table-hover">
+	<thead>
+	  <tr>
+		<th>Field Name</th>
+		<th>Type</th>
+		<th>Description</th>
+		<th>M/O(필수/옵션)</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr>
+		<th colspan="4" class="text-center">HEADERs</th>
+	  </tr>
+	  <tr>
+		<td>Content-Type</td>
+		<td>CHARs</td>
+		<td>application/json(요청이 성공인경우)</td>
+		<td>O</td>
+	  </tr>
+	  <tr>
+		<td>Content-Length</td>
+		<td></td>
+		<td>BODY 파트 길이</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		<th colspan="4" class="text-center">BODY</th>
+	  </tr>
+	  <tr>
+		<td>journalism_values</td>
+		<td>JSON</td>
+		<td>
+			저널리즘 가치별 점수 : point, <br>
+			계량요인별 점수 : score, <br>
+			독이성:read, <br>
+			투명성:transparent, <br>
+			사실성:fact, <br>
+			유용성:useful, <br>
+			균형성:balance, <br>
+			다양성:variety, <br>독창성:original, <br>중요성:important, <br>심층성:deep, <br>선정성:yellow
+		</td>
+		<td>M</td>
+	  </tr>
+	  <tr>
+		  <th colspan="4" class="text-center">BODY 파트 예시<th>
+	  </tr>
+	  <tr>
+		<td colspan="4">
+		  <pre>
+{
+  journalism_values: {
+	  read: { point: 5.5, scores: { image_count: 1 } },
+	  transparent: { point: 5.5, scores: { byline:1, quote_count:1, title_punc_count: 1 } },
+	  fact: { point: 5.5, scores: { byline:1, quote_count:1, number_count:1, image_count:1, avg_adverbs_per_sentence:1 } },
+	  useful: { point: 5.5, scores: { image_count:1 } },
+	  balance: { point: 5.5, scores: { quote_count:1 } },
+	  variety: { point: 5.5, scores: { content_length:1, quote_count:1, image_count:1} },
+	  original: { point: 5.5, scores: { title_punc_count:1, image_count:1 } },
+	  important: { point: 5.5, scores: { content_length:1, quote_count:1, number_count:1 } },
+	  deep: { point: 5.5, scores: { content_length:1, number_count:1, image_count:1 } },
+	  yellow: { point: 5.5, scores: { byline:1, title_punc_count:1, title_adverb_count:1, avg_adverbs_per_sentence:1, quotes_per_content:1 }
+	  }
+  }
+}
+		  </pre>
+		</td>
+	  </tr>
+	</tbody>
+  </table>  
+</div>
+
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+<script>
+$(window).load(function(){ hideWaitIndi(); });
+</script>
+{{end}}

@@ -1,0 +1,165 @@
+{{extends "layout_admin.html"}}
+{{block title()}}사용자 목록{{end}}
+
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+<style>
+</style>
+{{end}}
+
+{{block chead()}}<h1>사용자 목록
+<button type="button" class="btn btn-danger pull-right" onclick="popupNew()">사용자 추가</button>
+</h1>{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <div class="box-body">
+        <table id="jqdt1" class="table table-bordered table-striped table-hover" width="100%">
+            <thead>
+                <tr>
+				  	<th>로그인 아이디</th>
+					<th>이름</th>
+				  	<th>이메일</th>
+				  	<th>전화번호</th>
+					<th>레벨</th>
+                  	<th>최근 로그인 시간</th>
+                </tr>
+			</thead>
+        </table>
+    </div>
+</div>
+
+<div class="modal modal-danger fade" id="modalAdd">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">사용자 추가</h4>
+			</div>
+			<div class="modal-body">
+
+				<form role="form" method="POST" action="newadmin" id="fomAdd">
+					<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+	                <div class="form-group">
+						<label>로그인 아이디</label>
+						<input type="text" name="loginid" class="form-control" id="newAdminId">
+                	</div>
+					<div class="form-group">
+						<label>비밀번호</label>
+						<input type="password" name="passwd" class="form-control" id="newAdminPw1">
+					</div>
+					<div class="form-group">
+						<label>비밀번호 확인</label>
+						<input type="password" class="form-control" id="newAdminPw2">
+					</div>
+				</form>
+			
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">취소</button>
+				<button type="button" class="btn btn-outline" id="mAddOK">추가</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script>
+$(function () {
+    var jqdt = $("#jqdt1").DataTable({
+        "lengthMenu": [10, 20, 30, 50],
+        language: {
+            "infoEmpty": "검색 결과가 없습니다.",
+            "emptyTable": "테이블에 표시할 내용이 없습니다.",
+            "info": "_TOTAL_ 개의 항목 중 _START_ ~ _END_",
+            "infoFiltered": " (전체 _MAX_ 개)",
+            "lengthMenu": "페이지 당 _MENU_ 항목 표시",
+			"search": "검색:",
+            paginate: {
+                first:    '«',
+                previous: '‹',
+                next:     '›',
+                last:     '»'
+            },
+            aria: {
+                paginate: {
+                    first:    'First',
+                    previous: 'Previous',
+                    next:     'Next',
+                    last:     'Last'
+                }
+            }
+        },
+		serverSide: true,
+        ajax: {
+            url: '/admin/user/list.json',
+            type: 'POST',
+            data: function (d) {
+                d._csrf = "{{ ._csrf }}";
+            }
+        },
+        columns: [
+            { "data": "loginId",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).html('<a href="/admin/user/view?id='+oData.DT_RowId+'">'+escapeHtml(sData)+'</a>');
+                }
+            },
+            { "data": "name" },
+			{ "data": "email" },
+			{ "data": "phone" },
+			{ "data": "level" },
+			{ "data": "lastLoginAt" }
+        ]
+	})
+
+	$("#mAddOK").click(onAddAdmin);
+
+	hideWaitIndi();
+});
+
+function onAddAdmin()
+{
+	var lid = $("#newAdminId").val();
+	if (lid == "")
+	{
+		alert("로그인 아이디를 입력해주세요.");
+		return;
+	}
+
+	if (lid.length < 5)
+	{
+		alert("아이디는 5글자 이상 입력해주세요.");
+		return;
+	}
+
+	var pw1 = $("#newAdminPw1").val();
+	var pw2 = $("#newAdminPw2").val();
+	if (pw1 != pw2)
+	{
+		alert("비밀번호가 일치하지 않습니다.");
+		return;
+	}
+
+	if (pw1 == "")
+	{
+		alert("비밀번호를 입력해주세요.");
+		return;
+	}
+
+	//$('#modalAdd').modal('hide');
+	showWaitIndi();
+	$("#fomAdd").submit();
+}
+
+function popupNew()
+{
+	$('#modalAdd').modal();
+}
+</script>
+{{end}}

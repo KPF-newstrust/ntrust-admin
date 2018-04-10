@@ -1,0 +1,160 @@
+{{extends "layout_open.html"}}
+{{block title()}}클러스터 목록{{end}}
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css">
+<style>
+#cards span.media {
+	color: #888;
+	font-size: 0.9em;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>클러스터 목록</h1>
+{{end}}
+
+{{block body()}}
+
+<form method="POST" id="f1">
+<div class="row">
+	<div class="col-xs-12 form-group">
+		{{ range cate := .cateOpts }}
+		<a type="button" class="btn btn-flat btn-{{ if cate == .selCate }}primary{{else}}default{{end}}" href="?cate={{cate}}">{{ cate }}</a>
+		{{ end }}
+	</div>
+</div>
+<div class="row">
+	<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+	<input type="hidden" name="cate" value="{{.selCate}}">
+	<input type="hidden" name="pg" id="f1Pg">
+	<div class="form-inline col-sm-12">
+		<div class="pull-right">
+			<div class="form-group">
+				<div class="input-group">
+					<input type="text" class="form-control" value="{{.date}}" id="date" name="date" placeholder="기사 작성일">
+					<span class="input-group-addon" onclick="javascript:$('#date').val('')" style="cursor:pointer">
+						X
+					</span>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<input type="text" class="form-control" value="{{.title}}" id="title" name="title" placeholder="기사 제목">
+			</div>
+
+			<button type="submit" class="btn btn-flat btn-info">검색</button>
+		</div>
+	</div>
+</div>
+</form>
+
+<p></p>
+
+<div class="row" id="cards">
+	{{ range card := .cards }}
+	<div class="col-md-12">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<a class="box-title" target="_blank" href="/c/{{ card.NewsId }}">{{ card.Title }}</a>
+				<span class="media">{{ card.Media }}</span>
+				<span class="media" style="float:right;margin-top:0;">총 {{ card.Count + 1 }}개의 기사가 있습니다.</span>
+			</div>
+            <div class="box-body">
+				<ul>
+				{{ range item := card.Items }}
+					<li>
+						{{ item.Title }}
+						<span class="media">- {{ item.Media }} </span>
+					</li>
+				{{ end }}
+				</ul>
+            </div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+
+<div class="box-footer clearfix">
+	<div class="row">
+		<div class="col-sm-12">
+			<ul class="pagination pull-right" id="logPages">
+			</ul>			
+		</div>
+	</div>
+</div>
+{{`
+<script id="tplPages" type="text/html">
+{{ if (it.page > 0) { }}<li><a onclick="loadPage({{=it.page}} -1)">‹</a></li>{{ } }}
+{{
+var showHead = it.page >= 4;
+var showTail = it.total - it.page > 4;
+var pL=0;
+if (showHead) { pL=it.page -1; }}
+	<li><a onclick="loadPage(0)">1</a></li>
+	<li><a>...</a></li>
+{{ }
+
+	var box = (showHead && showTail) ? 3:5;
+	if (showHead && !showTail)
+	{
+		pL = it.total -5;
+	}
+
+	for (var b=0; b<box; b++)
+	{
+		var pg = pL+b;
+		var pN = pg+1;
+		if (pN > it.total) break;
+
+		if (pg == it.page)
+		{
+			}}<li class="active"><a>{{=pN}}</a></li>{{
+		}
+		else
+		{
+			}}<li><a onclick="loadPage({{=pg}})">{{=pN}}</a></li>{{
+		}
+	}
+
+if (showTail) { }}
+	<li><a>...</a></li>
+	<li><a onclick="loadPage({{=it.total -1}})">{{=it.total}}</a></li>
+{{ } }}
+
+{{ if (it.page < it.total) { }}
+<li><a onclick="loadPage({{=it.page +1}})">›</a></li>
+{{ } }}
+</script>
+`| raw}}
+
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.1.0/doT.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script>
+function loadPage(pg)
+{
+	showWaitIndi();
+	$("#f1Pg").val(pg);
+	$("#f1").submit();
+}
+
+$(window).load(function(){
+	$(".btn").click(function() {
+		showWaitIndi();
+	});
+
+	var tplPages = doT.template($('#tplPages').html());
+	$("#logPages").html(tplPages({page:{{.page}}, total:{{.total}} }));
+	hideWaitIndi();
+
+	$('#date').datepicker({
+		autoclose: true,
+		format: "yyyy-mm-dd"
+	})
+});
+
+</script>
+{{end}}

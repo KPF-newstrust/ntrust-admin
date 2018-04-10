@@ -1,0 +1,146 @@
+{{extends "layout_admin.html"}}
+{{block title()}}알고리즘 테스트{{end}}
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+<style>
+tfoot input {
+	width: 100%;
+	padding: 3px;
+	box-sizing: border-box;
+}
+tfoot {
+    display: table-header-group;
+}
+select {
+    width: 100%;
+}
+.dataTables_filter {
+    display: none;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>알고리즘 테스트 내역</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <div class="box-body">
+        <table id="jqdt1" class="table table-bordered table-striped table-hover" width="100%">
+            <thead>
+                <tr>
+                    <th width="110">등록시간</th>
+                    <th width="80">분류</th>
+                    <th>입력 내용</th>
+                    <th width="110">상태</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th><select data-column="1">
+                        <option value="">전체</option>
+                        <option value="split">문장 분리</option>
+                        <option value="postag">형태소 분석</option>
+                        <option value="sanitize">본문 전처리</option>
+                        <!--<option value="metric">계량 요인 추출</option>-->
+                        <option value="trust">트러스트 스코어링</option>
+                        <option value="integrate">통합 평가</option>
+					</select></th>
+					<th><input type="text" placeholder="내용 검색" data-column="2"></th>
+					<th><select data-column="3">
+                        <option value="">전체</option>
+                        <option value="Y">완료만</option>
+                        <option value="N">미완료만</option>
+					</select></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script>
+$(function() {
+    var jqdt = $("#jqdt1").DataTable({
+		"lengthMenu": [10, 20, 30, 50],
+		"order": [[ 0, 'desc' ]],
+        language: {
+            "infoEmpty": "검색 결과가 없습니다.",
+            "emptyTable": "테이블에 표시할 내용이 없습니다.",
+            "info": "_TOTAL_ 개의 항목 중 _START_ ~ _END_",
+            "infoFiltered": "",
+            "lengthMenu": "페이지 당 _MENU_ 항목 표시",
+            paginate: {
+                first:    '«',
+                previous: '‹',
+                next:     '›',
+                last:     '»'
+            },
+            aria: {
+                paginate: {
+                    first:    'First',
+                    previous: 'Previous',
+                    next:     'Next',
+                    last:     'Last'
+                }
+            }
+        },
+        serverSide: true,
+        ajax: {
+            url: '/admin/lab/list.json',
+            type: 'POST',
+            data: function (d) {
+				d._csrf = "{{ ._csrf }}";
+            }
+        },
+        columns: [
+            { "data": "ts" },
+            { "data": "type",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+					switch (sData) {
+						case "split": sData = "문장 분리"; break;
+						case "postag": sData = "형태소 분석"; break;
+						case "sanitize": sData = "본문 전처리"; break;
+						case "metric": sData = "계량 요인 추출"; break;
+                        case "trust": sData = "트러스트 스코어링"; break;
+                        case "integrate": sData = "통합 평가"; break;
+					}
+                    $(nTd).text(sData);
+                }
+			},
+            { "data": "title",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).html('<a href="/admin/lab/'+oData.type+'?id='+oData.DT_RowId+'">'+escapeHtml(sData)+'</a>');
+                }
+			},
+			{ "data": "state" },
+        ]
+	});
+	
+	jqdt.columns().every(function () {
+        var that = this;
+ 
+        $('input', this.footer() ).on('keyup change', function() {
+            if (that.search() !== this.value) {
+                that.search(this.value).draw();
+            }
+        });
+
+        $('select', this.footer()).on('change', function() {
+            if (that.search() !== this.value) {
+                that.search(this.value).draw();
+            }
+        });
+	});
+
+	applyDtFilters("#jqdt1",jqdt);
+    
+    hideWaitIndi();
+});
+</script>
+{{end}}

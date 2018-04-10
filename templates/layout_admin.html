@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>{{yield title()}} - NewsTrust</title>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<link href="/public/img/favicon.png" rel="shortcut icon" type="image/png">
+	<link href="/public/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet">
+	<link href="/public/css/select2.min.css" rel="stylesheet">
+	<link href="/public/css/AdminLTE.min.css" rel="stylesheet">
+	{*
+		AdminLTE Skins. Choose a skin from the css/skins
+		folder instead of downloading all of them to reduce the load.
+	*}
+	<link rel="stylesheet" href="/public/css/skins/_all-skins.min.css">
+	<link href="/public/css/nprogress.css" rel="stylesheet">
+	<link href="/public/css/app.css?1" rel="stylesheet">
+{{yield localCSS()}}
+	{*
+		HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+		WARNING: Respond.js doesn't work if you view the page via file://
+	*}
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+	<header class="main-header">
+
+		<!-- Logo -->
+		<a href="#" class="logo">
+			<!-- mini logo for sidebar mini 50x50 pixels -->
+			<span class="logo-mini"><b>N</b>T</span>
+			<!-- logo for regular state and mobile devices -->
+			<span class="logo-lg"><b>뉴스</b>트러스트</span>
+		</a>
+
+		<!-- Header Navbar: style can be found in header.less -->
+		<nav class="navbar navbar-static-top">
+			<!-- Sidebar toggle button-->
+			<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+				<span class="sr-only">Toggle navigation</span>
+			</a>
+
+			<!-- Navbar Right Menu -->
+			<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+{*
+					<!-- Notifications: style can be found in dropdown.less -->
+					<li class="dropdown notifications-menu">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-bell-o"></i>
+							<span class="label label-warning">2</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="header">2개의 알림 메세지가 있습니다.</li>
+							<li>
+								<!-- inner menu: contains the actual data -->
+								<ul class="menu">
+									<li>
+										<a href="#">
+											<i class="fa fa-users text-aqua"></i> 샘플 #3가 모집 종료되었습니다.
+										</a>
+									</li>
+									<li>
+										<a href="#">
+											<i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
+											page and may cause design problems
+										</a>
+									</li>
+								</ul>
+							</li>
+							<li class="footer"><a href="#">View all</a></li>
+						</ul>
+					</li>
+*}
+					<!-- User Account: style can be found in dropdown.less -->
+					<li class="dropdown user user-menu">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<img src="{{ ._AuthPhoto }}" class="user-image" alt="User Image">
+							<span class="hidden-xs">{{ ._AuthName }}</span>
+						</a>
+						<ul class="dropdown-menu">
+							<!-- User image -->
+							<li class="user-header">
+								<img src="{{ ._AuthPhoto }}" class="img-circle" alt="User Image">
+
+								<p>
+									{{ ._AuthName }}
+									<small>Member since 2017</small>
+								</p>
+							</li>
+							<!-- Menu Footer-->
+							<li class="user-footer">
+								<div class="pull-left">
+									<a href="/admin/user/view?id={{ ._AuthUID }}" class="btn btn-default btn-flat">프로필</a>
+								</div>
+								<div class="pull-right">
+									<a href="/logout" class="btn btn-default btn-flat">로그아웃</a>
+								</div>
+							</li>
+						</ul>
+					</li>
+					{* Control Sidebar Toggle Button -- >
+					<li>
+						<a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+					</li>
+					*}
+				</ul>
+			</div>
+		</nav>
+	</header>
+	<!-- Left side column. contains the logo and sidebar -->
+	<aside class="main-sidebar">
+		<!-- sidebar: style can be found in sidebar.less -->
+		<section class="sidebar">
+			<!-- Sidebar user panel -->
+			<div class="user-panel">
+				<div class="pull-left image">
+					<img src="{{ ._AuthPhoto }}" class="img-circle" alt="User Image">
+				</div>
+				<div class="pull-left info">
+					<p>{{ ._AuthName }}</p>
+					<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+				</div>
+			</div>
+
+			<!-- sidebar menu: : style can be found in sidebar.less -->
+			<ul class="sidebar-menu">
+<!--				
+				<li class="{{ if hasPrefix(.lmenu,"t1") }}active{{ end }}">
+					<a href="/admin/dashboard">
+						<i class="fa fa-tachometer"></i>
+						<span>대시보드</span>
+					</a>
+				</li>
+-->
+				<li class="treeview{{ if hasPrefix(.lmenu,"t3") }} active{{ end }}">
+					<a href="#">
+						<i class="fa fa-newspaper-o"></i> <span>뉴스 기사</span>
+						<i class="fa fa-angle-left pull-right"></i>
+					</a>
+					<ul class="treeview-menu">
+{{ if ._AuthLevel >= 5 }}						
+						<li{{ if .lmenu == "t3a" }} class="active"{{ end }}><a href="/admin/year1/list"><i class="fa fa-circle-o"></i> 1차년도 DB (!작업중)</a></li>
+						<li{{ if .lmenu == "t3b" }} class="active"{{ end }}><a href="/admin/nsrc/list"><i class="fa fa-circle-o"></i> 수집 DB (원본)</a></li>
+						<li{{ if .lmenu == "t3c" }} class="active"{{ end }}><a href="/admin/news/list"><i class="fa fa-circle-o"></i> 처리 DB (가공)</a></li>
+						<li{{ if .lmenu == "t3d" }} class="active"{{ end }}><a href="/admin/annotate/list"><i class="fa fa-circle-o"></i> 개체명 정답셋</a></li>
+						<li{{ if .lmenu == "t3e" }} class="active"{{ end }}><a href="/admin/bugs/list"><i class="fa fa-circle-o"></i> 신고된 문제점</a></li>
+						<li{{ if .lmenu == "t3f" }} class="active"{{ end }}><a href="/admin/assess/list"><i class="fa fa-circle-o"></i> 기사 평가</a></li>
+						<li{{ if .lmenu == "t3g" }} class="active"{{ end }}><a href="/admin/cluster/list" onclick="showWaitIndi()"><i class="fa fa-circle-o"></i> 뉴스 클러스터링</a></li>
+{{ else }}
+						<li{{ if .lmenu == "t3c" }} class="active"{{ end }}><a href="/admin/news/list"><i class="fa fa-circle-o"></i> 기사 목록 </a></li>
+						<li{{ if .lmenu == "t3g" }} class="active"{{ end }}><a href="/admin/cluster/list" onclick="showWaitIndi()"><i class="fa fa-circle-o"></i> 뉴스 클러스터링</a></li>
+{{ end }}
+					</ul>
+				</li>
+{{ if ._AuthLevel >= 5 }}
+				<li class="treeview{{ if hasPrefix(.lmenu,"t5") }} active{{ end }}">
+					<a href="#">
+						<i class="fa fa-book"></i> <span>사전 관리</span>
+						<i class="fa fa-angle-left pull-right"></i>
+					</a>
+					<ul class="treeview-menu">
+						<li{{ if .lmenu == "t5a" }} class="active"{{ end }}><a href="/admin/dict/list"><i class="fa fa-list"></i> 전체 목록</a></li>
+						<li{{ if .lmenu == "t5b" }} class="active"{{ end }}><a href="/admin/dict/noun"><i class="fa fa-circle-o"></i> 명사 입력</a></li>
+						<li{{ if .lmenu == "t5c" }} class="active"{{ end }}><a href="/admin/dict/solo"><i class="fa fa-circle-o"></i> 단독 어절 입력</a></li>
+						<li{{ if .lmenu == "t5d" }} class="active"{{ end }}><a href="/admin/dict/josa"><i class="fa fa-circle-o"></i> 조사 입력</a></li>
+						<li{{ if .lmenu == "t5e" }} class="active"{{ end }}><a href="/admin/dict/predicate"><i class="fa fa-circle-o"></i> 용언 입력</a></li>
+						<li{{ if .lmenu == "t5f" }} class="active"{{ end }}><a href="/admin/dict/irregular"><i class="fa fa-circle-o"></i> 불규칙 활용 입력</a></li>
+						<li{{ if .lmenu == "t5x" }} class="active"{{ end }}><a href="/admin/dict/bulk"><i class="fa fa-bullseye"></i> 벌크 입력</a></li>
+					</ul>
+				</li>
+{{ end }}
+				<li class="treeview{{ if hasPrefix(.lmenu,"t8") }} active{{ end }}">
+					<a href="#">
+						<i class="fa fa-flask"></i> <span>API 테스트</span>
+						<i class="fa fa-angle-left pull-right"></i>
+					</a>
+					<ul class="treeview-menu">
+						<li{{ if .lmenu == "t8z" }} class="active"{{ end }}><a href="/admin/lab/intro"><i class="fa fa-info-circle"></i> API 소개</a></li>
+						<li{{ if .lmenu == "t8a" }} class="active"{{ end }}><a href="/admin/lab/list"><i class="fa fa-list"></i> 테스트 내역</a></li>
+						<li{{ if .lmenu == "t8b" }} class="active"{{ end }}><a href="/admin/lab/split"><i class="fa fa-circle-o"></i> 문장 분리</a></li>
+						<li{{ if .lmenu == "t8c" }} class="active"{{ end }}><a href="/admin/lab/postag"><i class="fa fa-circle-o"></i> 형태소 분석</a></li>
+						<li{{ if .lmenu == "t8d" }} class="active"{{ end }}><a href="/admin/lab/sanitize"><i class="fa fa-circle-o"></i> 본문 전처리</a></li>
+						<!--<li{{ if .lmenu == "t8e" }} class="active"{{ end }}><a href="/admin/lab/metric"><i class="fa fa-circle-o"></i> 계량 요인 추출</a></li>-->
+						<li{{ if .lmenu == "t8f" }} class="active"{{ end }}><a href="/admin/lab/trust"><i class="fa fa-circle-o"></i> 저널리즘 가치 점수화</a></li>
+						<li{{ if .lmenu == "t8g" }} class="active"{{ end }}><a href="/admin/lab/integrate"><i class="fa fa-tasks"></i> 통합 평가</a></li>
+					</ul>
+				</li>
+				
+{{ if ._AuthLevel == 9 }}
+				<li class="treeview{{ if hasPrefix(.lmenu,"t9") }} active{{ end }}">
+					<a href="#">
+						<i class="fa fa-cogs"></i> <span>시스템 관리</span>
+						<i class="fa fa-angle-left pull-right"></i>
+					</a>
+					<ul class="treeview-menu">
+						<li{{ if .lmenu == "t9a" }} class="active"{{ end }}><a href="/admin/user/list"><i class="fa fa-users"></i> 사용자 관리</a></li>
+                        <li{{ if .lmenu == "t9b" }} class="active"{{ end }}><a href="/admin/syslog"><i class="fa fa-file-text-o"></i> 시스템 로그</a></li>
+					</ul>
+				</li>
+			</ul>
+{{ end }}
+		</section>
+		<!-- /.sidebar -->
+	</aside>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+
+			{{ if len(._flError) > 0 }}
+			<div class="alert alert-danger alert-dismissible">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				{{ range ._flError }}
+				<i class="icon fa fa-ban"></i>{{ . }}<br>
+				{{ end }}
+			</div>
+		{{ end }}
+
+		{{ if len(._flSuccess) > 0 }}
+			<div class="alert alert-success alert-dismissible">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				{{ range ._flSuccess }}
+				<i class="icon fa fa-check"></i>{{ . }}<br>
+				{{ end }}
+			</div>
+		{{ end }}
+{{yield chead()}}
+{*
+		<--
+		<h1>
+			{ title }
+			<small>${(subtitle)!}</small>
+		</h1>
+
+		<ol class="breadcrumb">
+			<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+			<li class="active">Dashboard</li>
+		</ol>
+		-->
+*}
+	</section>
+
+<section class="content">
+{{yield body()}}
+</section>
+
+</div>
+<!-- /.content-wrapper -->
+
+	<footer class="main-footer">
+		<div class="pull-right hidden-xs">
+			<b>Version</b> {{ _version }}
+		</div>
+		<strong>Copyright &copy; 2018 <a href="http://slowalk.co.kr">Slowalk</a></strong>. All rights reserved.
+	</footer>
+
+</div>
+<div id="waitIndi"><div></div></div>
+<!-- ./wrapper -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="/public/js/bootstrap.min.js"></script>
+<script src="/public/js/fastclick.js"></script>
+<script src="/public/js/nprogress.js"></script>
+<script src="/public/js/adminlte.min.js"></script>
+<script src="/public/js/app.js"></script>
+{{yield localJS()}}
+</body></html>

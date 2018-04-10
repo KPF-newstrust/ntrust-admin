@@ -1,0 +1,53 @@
+{{extends "layout_admin.html"}}
+{{block title()}}벌크 입력 결과{{end}}
+{{block localCSS()}}
+<style>
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>벌크 입력 결과
+    <small>총 {{ len(.results) }}개</small>
+</h1>
+{{end}}
+
+{{block body()}}
+<div class="box">
+    <div class="box-body no-padding">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>단어</th>
+                    <th>품사</th>
+                    <th>메타 정보</th>
+                    <th>입력 결과</th>
+                </tr>
+            </thead>
+            <tbody>
+{{ range idx,res := .results }}
+                <tr>
+                    <td>{{ (idx+1) }}</td>
+                    <td>{{ res.Word }}</td>
+                    <td>{{ res.Pos }}</td>
+                    <td>{{ res.Meta }}</td>
+                    <td>{{ if res.Error == "" || hasPrefix(res.Error, "성공") }}
+                        <span class="badge bg-green">성공</span> {{ res.Error }}
+						{{else}}
+						<span class="badge bg-red">실패</span> {{ res.Error }}
+						{{end}}
+					</td>
+                </tr>
+{{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{end}}
+
+{{block localJS()}}
+<script>
+$(window).load(function(){ hideWaitIndi(); });
+</script>
+{{end}}

@@ -1,0 +1,23 @@
+[dev]
+
+hostname = "localhost"
+listen_port = 8090
+gateway_port = 8090
+serve_static = true
+use_ssl = false
+
+dsn_mongo = "mongodb://localhost:27017/ntrust2"
+dsn_redis = "redis://localhost:6379?ConnectTimeout=5000&IdleTimeOutSecs=180"
+dsn_amqp = "amqp://username:password@localhost:35672/ntrust"
+
+[prod]
+
+hostname = "newstrust.kr"
+listen_port = 8090
+gateway_port = 8090
+serve_static = true
+use_ssl = true
+
+dsn_mongo = "mongodb://localhost:27017/ntrust2"
+dsn_redis = "redis://localhost:6379?ConnectTimeout=5000&IdleTimeOutSecs=180"
+dsn_amqp = "amqp://username:password@localhost:35672/ntrust"

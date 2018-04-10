@@ -1,0 +1,50 @@
+{{extends "layout_admin.html"}}
+{{block title()}}뉴스 상세 정보{{end}}
+{{block localCSS()}}
+<style>
+.news_content {
+	line-height: 2em;
+}
+.news_content i {
+	color: #ccc;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>기사 원본 세부 정보 <small>{{ .item.title }}</small></h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-info">
+    <div class="box-body">
+		<table class="matrix">
+			{{ range key := .keys }}
+			<tr>
+				<th>{{ key }}</th>
+{{ if key == "news_content" }}
+				<td class="news_content">{{ (.item[key])|linebreaksCRBR|raw }}</td>
+{{ else if key == "newsitem_id" }}
+				<td><a href="/admin/news/view?nws={{ .item[key] }}">{{ .item[key] }}</a></td>
+{{ else if key == "news_url" }}
+				<td><a href="{{ .item[key] }}" target="_blank">{{ .item[key] }}</a></td>
+{{ else if hasSuffix(key, "_dt") }}
+				<td>{{ .item[key]|formatTillSec }}</td>
+{{ else }}
+				<td>{{ .item[key]|noneIfNil }}</td>
+{{ end }}
+			</tr>
+			{{ end }}
+		</table>
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary" onclick="window.history.back()">Back</button>
+
+{{end}}
+
+{{ block localJS() }}
+<script>
+$(window).load(function(){ hideWaitIndi(); });
+</script>
+{{end}}

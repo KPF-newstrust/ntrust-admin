@@ -1,0 +1,77 @@
+{{extends "layout_admin.html"}}
+{{block title()}}문장 분리{{end}}
+{{block localCSS()}}
+<style>
+.news_content {
+	line-height: 2em;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 5px;	
+}
+.news_content i {
+	color: #ccc;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>문장 분리
+{{ if .data.Id == "" }}
+	<small>문장 단위로 나눌 본문(문단)을 입력하십시오.</small>
+{{ end }}	
+</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <form role="form">
+        <div class="box-body">
+			<textarea class="form-control" rows="5" id="content" name="content" 
+			{{ if .data.Id }}readonly{{else}}placeholder="본문 입력"{{end}}>{{.data.Content}}</textarea>
+        </div>
+
+        <div class="box-footer">
+{{ if .data.Id }}
+	{{ if !.data.CompletedAt }}
+		<button type="button" class="btn disabled">결과 대기중입니다...</button> &nbsp;
+	{{ end }}
+		<button type="button" class="btn btn-danger" onclick="onLabDelete('{{ .data.Id.Hex() }}','{{ ._csrf }}')">삭제</button>
+		<button type="button" class="btn btn-warning pull-right" onclick="onLabResend('{{ .data.Id.Hex() }}','{{ ._csrf }}')">재요청</button>
+{{ else }}
+		<button type="button" class="btn btn-warning" onclick="onSubmit()">전송</button>
+{{ end }}
+        </div>
+    </form>
+</div>
+
+{{ if .data.CompletedAt }}
+<div class="box box-success">
+	<div class="box-header with-border">
+		<h3 class="box-title">문장 분리 결과</h3>
+	</div>
+	<div class="box-body">
+		<div class="news_content">{{.data.Result|linebreaksCRBR|raw}}</div>
+	</div>
+</div>	
+{{ end }}
+
+<a href="list" class="btn btn-primary">목록으로 돌아가기</a>
+{{end}}
+
+{{block localJS()}}
+<script src="/public/js/apilab.js"></script>
+<script>
+function onSubmit()
+{
+	var content = $("#content").val().trim();
+	if (!content)
+	{
+		alert("본문을 입력해주세요.");
+		return;
+	}
+
+	postLabNew({"type":"split", "content":content, "_csrf":"{{ ._csrf }}"});
+}
+$(window).load(function(){ hideWaitIndi(); });
+</script>
+{{end}}

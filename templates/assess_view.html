@@ -1,0 +1,493 @@
+{{extends "layout_admin.html"}}
+{{block title()}}기사 평가 상세 정보{{end}}
+{{block localCSS()}}
+<style>
+.news_content {
+	line-height: 2em;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 5px;	
+}
+.news_content i {
+	color: #ccc;
+}
+table.matrix tbody th {
+	width: 110px;
+}
+table.matrix td {
+	vertical-align: top;
+}
+table.matrix table {
+	border-collapse: collapse;
+	width: 100%;
+	text-align: center;
+}
+table.allcenter td {
+	text-align: center;
+}
+table.allcenter td b[title]:hover {
+	background-color: #ff0;
+	text-decoration: underline;
+	cursor: pointer;
+}
+table.allcenter td i {
+	font-weight: bold;
+	color: #f00;
+}
+</style>
+{{ end }}
+
+{{block chead()}}
+<h1>기사 평가 세부 정보 <small>{{ .item.Title }}</small>
+</h1>
+{{ end }}
+
+{{block body()}}
+	  
+<div class="box box-info">
+    <div class="box-body">
+		<table class="matrix">
+			<tr>
+				<th>News ID</th>
+				<td>{{ .item.NewsId }}
+					(
+					<a href="/admin/news/view?nws={{ .item.NewsId }}">처리DB보기</a> , 
+					<a href="/admin/nsrc/view?nws={{ .item.NewsId }}">수집DB보기</a> ,
+					<a href="/admin/year1/view?nws={{ .item.NewsId }}">1차년도DB보기</a>
+					)
+				</td>
+			</tr>
+			<tr>
+				<th>입력 시간</th>
+				<td>{{ .item.InsertDt }} &nbsp; (출판일: {{ .item.PubDate }})</td>
+			</tr>
+			<tr>
+				<th>언론사</th>
+				<td>{{ .item.MediaId }} ({{ .item.MediaName }})</td>
+			</tr>
+			<tr>
+				<th>카테고리</th>
+				<td>{{ .assess.Category }}</td>
+			</tr>
+			<tr>
+				<th>URL</th>
+				<td><a href="{{ .item.Url }}" target="_blank">{{ .item.Url }}</a></td>
+			</tr>
+			<tr>
+				<th>뉴스 제목</th>
+				<td>{{ .item.Title }}</td>
+			</tr>
+			<tr>
+				<th>뉴스 본문</th>
+				<td class="news_content">{{ .item.Content|linebreaksCRBR|raw }}</td>
+			</tr>
+
+			<tr>
+				<th>인용문</th>
+				<td><ul>{{ range qs := .item.QuotedSentences }}
+					<li>{{ qs.Sentence }} : (길이: {{ qs.Length }})</li>
+				{{ end }}</ul></td>
+			</tr>
+
+			<tr>
+				<th>주관적술어 / 무주체술어</th>
+				<td>{{ .item.ContentAnonPredicates|join:", " }}</td>
+			</tr>
+
+			<tr>
+				<th>본문 길이</th>
+				<td>{{ .item.ContentLength }}</td>
+			</tr>
+			<tr>
+				<th>제목 길이</th>
+				<td>{{ .item.TitleLength }}</td>
+			</tr>
+			<tr>
+				<th>제목 기타</th>
+				<td>느낌표:{{ .item.TitleNumExclamation }}개,
+					물음표:{{ .item.TitleNumQuestion }}개,
+					홑따옴표:{{ .item.TitleNumSingleQuote }}개,
+					겹따옴표:{{ .item.TitleNumDoubleQuote }}개,
+					단독:{{ .item.TitleHasExclusive }}개,
+					속보:{{ .item.TitleHasBreaking }}개,
+					기획:{{ .item.TitleHasPlan }}개,
+					충격,이럴수가:{{ .item.TitleHasShock }}개
+				</td>
+			</tr>
+
+
+		</table>
+    </div>
+</div>
+
+<div class="box box-warning">
+	<div class="box-header with-border">
+		<h3 class="box-title">계량평가요인별 점수</h3>
+	</div>
+	<div class="box-body">
+		<table class="matrix allcenter">
+			<tr>
+				<th width="25%">필드명</th>
+				<td width="50%">데이터</td>
+				<td width="25%">점수</td>
+			</tr>
+			<tr>
+				<th>바이라인</th>
+				<td>{{ if len(.item.Bylines) > 0 }}
+						{{ range bl := .item.Bylines }}
+							{{ if bl.Name != "" }}
+							name:"{{ bl.Name }}" &nbsp;
+							{{ end }}
+							{{ if bl.Email != "" }}
+							email:"{{ bl.Email }}" &nbsp;
+							{{ end }}
+						{{ end }}
+					{{ end }}
+				</td>
+				<td>{{ .item.Score.Byline }}</td>
+			</tr>
+			<tr>
+				<th>이미지 개수</th>
+				<td>{{ .item.ImageCount }}개</td>
+				<td>{{ .item.Score.ImageCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>기사 길이</th>
+				<td>{{ .item.ContentLength }}</td>
+				<td>{{ .item.Score.ContentLength|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>평균 문장 길이</th>
+				<td>{{ .item.ContentAvgSentenceLength|toFixed:3 }}</td>
+				<td>{{ .item.Score.AvgSentenceLength|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>문장당 평균 부사수</th>
+				<td>{{ .item.ContentAvgAdverbsPerSentence|toFixed:3 }}개</td>
+				<td>{{ .item.Score.AvgAdverbCountPerSentence|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>제목 길이</th>
+				<td>{{ .item.TitleLength }}</td>
+				<td>{{ .item.Score.TitleLength|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>제목에 물음표/느낌표 수</th>
+				<td>{{ .item.TitleNumQuestion + .item.TitleNumExclamation }}개</td>
+				<td>{{ .item.Score.TitlePuncCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>제목의 부사수</th>
+				<td>{{ len(.item.TitleAdverbs) }}개</td>
+				<td>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>수치 인용 수</th>
+				<td>{{ .item.ContentNumberCount }}개</td>
+				<td>{{ .item.Score.NumberCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>인용문 수</th>
+				<td>{{ len(.item.QuotedSentences) }}개</td>
+				<td>{{ .item.Score.QuoteCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>인용문 길이 비율</th>
+				<td>{{ (.item.ContentQuotePercent * 100)|toFixed:2 }}%</td>
+				<td>{{ .item.Score.QuotePercent|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>주관적술어/무주체술어 사용수</th>
+				<td>{{ len(.item.ContentAnonPredicates) }}개</td>
+				<td>{{ .item.Score.AnonPredicateCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>전문용어/한자어 사용수</th>
+				<td>{{ len(.item.ContentForeignWords) }}개</td>
+				<td>{{ .item.Score.ForeignWordCount|toFixed:3 }}</td>
+			</tr>
+			<tr>
+				<th>실명 정보원 수</th>
+				<td>{{ len(.item.InformantReal) }} {{ if len(.item.InformantReal) > 0 }} <div class="text-green">{{ join(.item.InformantReal, " / ") }}</div> {{ end }}</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<th>익명 정보원 수</th>
+				<td>{{ len(.item.InformantAnno) }} {{ if len(.item.InformantAnno) > 0 }} <div class="text-green">{{ join(.item.InformantAnno, " / ") }}</div> {{ end }}</td>
+				<td>-</td>
+			</tr>
+			<tr>
+				<th>실명인용 익명인용 비율</th>
+				<td>-</td>
+				<td>-</td>
+			</tr>
+
+			<tr>
+				<th>합계 / 평균</th>
+				<td></td>
+				<td>{{ .item.Score.TotalSum|toFixed:3 }} / {{ .item.Score.Average|toFixed:3 }}</td>
+			</tr>			
+		</table>
+	</div>
+</div>	
+
+<div class="box box-success">
+	<div class="box-header with-border">
+		<h3 class="box-title">저널리즘 가치 기준 점수</h3>
+	</div>
+	<div class="box-body">
+		<table class="matrix allcenter">
+			<tr>
+				<th>가치</th>
+				<th>위원회 점수</th>
+				<td>알고리즘 점수</td>
+				<td>저널리즘 가치별 점수</td>
+			</tr>
+			<tr>
+				<th>독이성</th>
+				<td>{{ .assess.Readability|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 제목길이(<b>{{ .item.Score.TitleLength|toFixed:3 }}</b>)
+					+ 제목물음표느낌표(<b>{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					+ 평균문장길이(<b>{{ .item.Score.AvgSentenceLength|toFixed:3 }}</b>)
+					+ 제목부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 문장평균부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Readability|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*0.001
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*0.003
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*0.001
+					+ <b title="제목길이">{{ .item.Score.TitleLength|toFixed:3 }}</b>*1
+					+ <b title="제목물음표느낌표">{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>*1.002
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.354
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1.5
+					+ <b title="평균문장길이">{{ .item.Score.AvgSentenceLength|toFixed:3 }}</b>*1.5
+					+ <b title="제목부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*2.466
+					+ <b title="문장평균부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*0.5
+					= <i>{{ .assess.Journal.Readability|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>투명성</th>
+				<td>{{ .assess.Clariry|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 제목물음표느낌표(<b>{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					+ 인용문비중(<b>{{ .item.Score.QuotePercent|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Transparency|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*4.498
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*3.003
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*4.5
+					+ <b title="제목물음표느낌표">{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>*3.619
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.454
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1
+					+ <b title="인용문비중">{{ .item.Score.QuotePercent|toFixed:3 }}</b>*0.001
+					= <i>{{ .assess.Journal.Transparency|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>사실성</th>
+				<td>{{ .assess.Reality|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 제목물음표느낌표(<b>{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					+ 제목부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 문장평균부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 인용문비중(<b>{{ .item.Score.QuotePercent|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Factuality|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*4.493
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*3.503
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*3.501
+					+ <b title="제목물음표느낌표">{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>*0.001
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*0.502
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1.5
+					+ <b title="제목부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*0.5
+					+ <b title="문장평균부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*1.5
+					+ <b title="인용문비중">{{ .item.Score.QuotePercent|toFixed:3 }}</b>*1
+					= <i>{{ .assess.Journal.Factuality|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>유용성</th>
+				<td>{{ .assess.Usefulness|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Utility|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*3.494
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*3.498
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*2.001
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.956
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1
+					= <i>{{ .assess.Journal.Utility|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>균형성</th>
+				<td>{{ .assess.Balance|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 제목물음표느낌표(<b>{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>)
+					+ 제목부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 문장평균부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 인용문비중(<b>{{ .item.Score.QuotePercent|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Fairness|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*2.996
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*3.002
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*3
+					+ <b title="제목물음표느낌표">{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>*1.501
+					+ <b title="제목부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*0.501
+					+ <b title="문장평균부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*1
+					+ <b title="인용문비중">{{ .item.Score.QuotePercent|toFixed:3 }}</b>*1
+					= <i>{{ .assess.Journal.Fairness|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>다양성</th>
+				<td>{{ .assess.Variety|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 제목길이(<b>{{ .item.Score.TitleLength|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					+ 평균문장길이(<b>{{ .item.Score.AvgSentenceLength|toFixed:3 }}</b>)
+					+ 인용문비중(<b>{{ .item.Score.QuotePercent|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Diversity|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*0.998
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*4.994
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*2.501
+					+ <b title="제목길이">{{ .item.Score.TitleLength|toFixed:3 }}</b>*0.5
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.953
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1
+					+ <b title="평균문장길이">{{ .item.Score.AvgSentenceLength|toFixed:3 }}</b>*0.5
+					+ <b title="인용문비중">{{ .item.Score.QuotePercent|toFixed:3 }}</b>*0.5
+					= <i>{{ .assess.Journal.Diversity|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>독창성</th>
+				<td>{{ .assess.Uniqueness|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 제목물음표느낌표(<b>{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Originality|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*4.494
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*4.492
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*3.501
+					+ <b title="제목물음표느낌표">{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>*3.09
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.823
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1.501
+					= <i>{{ .assess.Journal.Originality|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>중요성</th>
+				<td>{{ .assess.Importance|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Importance|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*2.495
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*3.503
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*3.5
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.002
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*0.5
+					= <i>{{ .assess.Journal.Importance|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>심층성</th>
+				<td>{{ .assess.Deep|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 기사길이(<b>{{ .item.Score.ContentLength|toFixed:3 }}</b>)
+					+ 인용문수(<b>{{ .item.Score.QuoteCount|toFixed:3 }}</b>)
+					+ 수치인용수(<b>{{ .item.Score.NumberCount|toFixed:3 }}</b>)
+					+ 이미지수(<b>{{ .item.Score.ImageCount|toFixed:3 }}</b>)
+					+ 인용문비중(<b>{{ .item.Score.QuotePercent|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Depth|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*4.496
+					+ <b title="기사길이">{{ .item.Score.ContentLength|toFixed:3 }}</b>*4.995
+					+ <b title="인용문수">{{ .item.Score.QuoteCount|toFixed:3 }}</b>*3.501
+					+ <b title="수치인용수">{{ .item.Score.NumberCount|toFixed:3 }}</b>*1.336
+					+ <b title="이미지수">{{ .item.Score.ImageCount|toFixed:3 }}</b>*1
+					+ <b title="인용문비중">{{ .item.Score.QuotePercent|toFixed:3 }}</b>*1
+					= <i>{{ .assess.Journal.Depth|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>선정성</th>
+				<td>{{ .assess.Inflammation|toFixed:3 }}</td>
+				<td>기자명(<b>{{ .item.Score.Byline|toFixed:3 }}</b>)
+					+ 제목길이(<b>{{ .item.Score.TitleLength|toFixed:3 }}</b>)
+					+ 제목물음표느낌표(<b>{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>)
+					+ 제목부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 문장평균부사수(<b>{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>)
+					+ 인용문비중(<b>{{ .item.Score.QuotePercent|toFixed:3 }}</b>)
+					= <i>{{ .assess.Vanilla.Sensationalism|toFixed:3 }}</i>
+				</td>
+				<td><b title="기자명">{{ .item.Score.Byline|toFixed:3 }}</b>*4.491
+					+ <b title="제목길이">{{ .item.Score.TitleLength|toFixed:3 }}</b>*3.5
+					+ <b title="제목물음표느낌표">{{ .item.Score.TitlePuncCount|toFixed:3 }}</b>*3.501
+					+ <b title="제목부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*3.5
+					+ <b title="문장평균부사수">{{ .item.Score.TitleAdverbCount|toFixed:3 }}</b>*3.5
+					+ <b title="인용문비중">{{ .item.Score.QuotePercent|toFixed:3 }}</b>*3.5
+					= <i>{{ .assess.Journal.Sensationalism|toFixed:3 }}</i>
+				</td>
+			</tr>
+			<tr>
+				<th>종합평가(신뢰도) 점수 평균</th>
+				<td>{{ .assess.Average|toFixed:3 }}</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<th>종합평가점수 계산</th>
+				<td>{{ .assess.Sum }}</td>
+				<td><i>{{ .assess.VanillaSum|toFixed:3 }}</i></td>
+				<td><i>{{ .assess.JournalSum|toFixed:3 }}</i></td>
+			</tr>		
+		</table>
+	</div>
+</div>	
+
+<a href="list" class="btn btn-primary">Back</a> &nbsp;
+{{end}}
+
+{{block localJS()}}
+<script>
+
+$(window).load(function(){
+
+	hideWaitIndi();
+});
+
+</script>
+
+{{end}}

@@ -1,0 +1,131 @@
+{{extends "layout_admin.html"}}
+{{block title()}}1차년도 DB 기사 목록{{end}}
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css">
+<style>
+tfoot input {
+	width: 100%;
+	padding: 3px;
+	box-sizing: border-box;
+}
+tfoot {
+    display: table-header-group;
+}
+#datepicker {
+	text-align: center;
+}
+.dataTables_filter {
+    display: none; 
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>1차년도 DB 기사 목록
+<small class="pull-right">날짜: <input type="text" id="datepicker" value="{{.targetDate}}"></small>
+</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <div class="box-body">
+        <table id="jqdt1" class="table table-bordered table-striped table-hover" width="100%">
+            <thead>
+                <tr>
+                  	<th>날짜</th>
+				  	<th>언론사</th>
+					<th>카테고리</th>
+                  	<th>제목</th>
+                </tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th></th>
+					<th><input type="text" placeholder="언론사 필터" data-column="1"></th>
+					<th><input type="text" placeholder="카테고리 필터" data-column="2"></th>
+					<th><input type="text" placeholder="제목 필터" data-column="3"></th>
+				</tr>
+			</tfoot>
+        </table>
+    </div>
+</div>
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script>
+$(function () {	
+    var jqdt = $("#jqdt1").DataTable({
+        "lengthMenu": [10, 20, 30, 50],
+        language: {
+            "infoEmpty": "검색 결과가 없습니다.",
+            "emptyTable": "테이블에 표시할 내용이 없습니다.",
+            "info": "_TOTAL_ 개의 항목 중 _START_ ~ _END_",
+            "infoFiltered": " (전체 _MAX_ 개)",
+            "lengthMenu": "페이지 당 _MENU_ 항목 표시",
+			"search": "NewsID 검색:",
+            paginate: {
+                first:    '«',
+                previous: '‹',
+                next:     '›',
+                last:     '»'
+            },
+            aria: {
+                paginate: {
+                    first:    'First',
+                    previous: 'Previous',
+                    next:     'Next',
+                    last:     'Last'
+                }
+            }
+        },
+        serverSide: true,
+        ajax: {
+            url: '/admin/year1/list.json',
+            type: 'POST',
+            data: function (d) {
+				d._csrf = "{{ ._csrf }}";
+				d.ymd = $('#datepicker').val();
+            }
+        },
+        columns: [
+            { "data": "pubDate", "searchable":false },
+            { "data": "mediaName" },
+			{ "data": "category" },
+            { "data": "title",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).html('<a href="/admin/year1/view?obj='+oData.DT_RowId+'">'+escapeHtml(sData)+'</a>');
+                }
+            }
+        ]
+	})
+	.on('preXhr.dt', function(e, settings, data) {
+		showWaitIndi();
+	})
+	.on('xhr.dt', function(e, settings, data) {
+		hideWaitIndi();
+	});
+	
+	jqdt.columns().every(function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            if ( that.search() !== this.value ) {
+                that.search(this.value).draw();
+            }
+        });
+	});
+	
+	$('#datepicker').datepicker({
+		autoclose: true,
+		format: "yyyy-mm-dd",
+	}).on("changeDate", function(e) {
+		jqdt.ajax.reload();
+	})
+});
+	
+</script>
+{{end}}

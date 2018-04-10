@@ -1,0 +1,699 @@
+{{extends "layout_admin.html"}}
+{{block title()}}개체명 정답 만들기{{end}}
+{{block localCSS()}}
+<style>
+#workarea {
+	line-height: 2em;
+}
+.attr-palette {
+	background-color: #fff0f0;
+}
+#srcText {
+    display: none;
+}
+.line .a1 {
+	background-color: #ff0;
+}
+
+#attrs label {
+	display: block;
+}
+.attrListItem span {
+	color: #080;
+}
+
+#attrPopup {
+	position: absolute;
+	background-color: #ddd;
+	border: 1px solid #000;
+	border-radius: 5px;
+	padding: 2px 5px;
+	z-index: 1000;
+	max-width: 400px;
+	display: none;
+}
+
+.anno.real_info{
+	background-color: #ff0;
+}
+.anno.real_quote{
+	background-color: #ff0;
+}
+.anno.real_indir{
+	background-color: #ff0;
+}
+.anno.anon_info{
+	background-color: #afa;
+}
+.anno.anon_quote{
+	background-color: #afa;
+}
+.anno.anon_indir{
+	background-color: #afa;
+}
+.anno.man_job{
+	background-color: #aaf;
+}
+.anno.man_pub{
+	background-color: #aaf;
+}
+.anno.man_news{
+	background-color: #aaf;
+}
+.anno.institute{
+	background-color: #faa;
+}
+.anno.place{
+	background-color: #faa;
+}
+.anno.number{
+	background-color: #faa;
+}
+.anno.disgust{
+	background-color: #faa;
+}
+
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>개체명 정답 만들기 <small>{{ .item.Title }}</small></h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-success">
+	<div class="box-header with-border">
+		<i class="fa fa-info-circle"></i><h3 class="box-title">기사 기본 정보</h3>
+	</div>
+	<div class="box-body">
+		<table class="matrix">
+			<tr>
+				<th>News ID</th>
+				<td>{{ .item.NewsId }}
+					( <a href="/admin/news/view?nws={{ .item.NewsId }}">처리DB보기</a>,
+					<a href="/admin/nsrc/view?nws={{ .item.NewsId }}">원본DB보기</a> )
+				</td>
+			</tr>
+			<tr>
+				<th>뉴스 제목</th>
+				<td>{{ .item.Title }}</td>
+			</tr>
+			<tr>
+				<th>최종 수정 시간</th>
+				<td>{{ .item.UpdateDt }}</td>
+			</tr>
+			<tr>
+				<th>언론사 정보</th>
+				<td>{{ .item.MediaId }} ({{ .item.MediaName }})</td>
+			</tr>
+			<tr>
+				<th>카테고리</th>
+				<td>{{ .item.Category }}&nbsp;
+					<select id="manCate">
+						<option></option>
+						<option>문화 예술</option>
+						<option>경제</option>
+						<option>교육</option>
+						<option>연예</option>
+						<option>국제</option>
+						<option>IT 과학</option>
+						<option>라이프스타일</option>
+						<option>정치</option>
+						<option>사회</option>
+						<option>스포츠</option>
+						<option>기타</option>
+					</select>
+					<button type="button" class="btn btn-danger btn-xs" onclick="updateCate()">변경</button>
+				</td>
+			</tr>
+			<tr>
+				<th>URL</th>
+				<td><a href="{{ .item.Url }}" target="_blank">{{ .item.Url }}</a></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div id="attrPopup" onmouseover="onOverPopup()" onmouseout="onOutPopup()">
+	<b>속성:</b> <span id="popAttr">123</span><br>
+	<b>어구:</b> <span id="popText">456</span><br>
+	<b>연관 데이터:</b> <span id="popMeta">789</span>
+	<br>
+	<button class="btn btn-danger btn-xs" onclick="onDeleteAttr()">삭제</button>
+</div>
+
+<div class="box box-info">
+	<div class="box-header with-border">
+		<i class="fa fa-file-text"></i><h3 class="box-title">기사 본문</h3>
+	</div>
+	<div class="box-body row">
+		<div class="col-sm-9">
+			<div id="workarea"></div>
+		</div>
+		<div class="col-sm-3">
+			<div class="box box-danger attr-palette">
+				<div class="box-header with-border">
+					<h3 class="box-title">속성 미리 선택</h3>
+				</div>
+    			<div class="box-body" id="attrs">
+					<label><input type="radio" name="attr" value="real_info" id="defAttr"> 실명정보원</label>
+					<label><input type="radio" name="attr" value="real_quote"> 실명직접인용</label>
+					<label><input type="radio" name="attr" value="real_indir"> 실명간접인용</label>
+					<label><input type="radio" name="attr" value="anon_info"> 익명정보원</label>
+					<label><input type="radio" name="attr" value="anon_quote"> 익명직접인용</label>
+					<label><input type="radio" name="attr" value="anon_indir"> 익명간접인용</label>
+					<label><input type="radio" name="attr" value="man_job"> 인물(직책포함)</label>
+					<label><input type="radio" name="attr" value="man_pub"> 공적인물</label>
+					<label><input type="radio" name="attr" value="man_news"> 실명/익명 기자명</label>
+					<label><input type="radio" name="attr" value="institute"> 기관</label>
+					<label><input type="radio" name="attr" value="place"> 장소</label>
+					<label><input type="radio" name="attr" value="number"> 수치 인용</label>
+					<label><input type="radio" name="attr" value="disgust"> 혐오표현/비속어/선정적단어</label>
+				</div>
+			</div>
+		</div>
+	</div>	
+</div>
+
+<div class="box box-info">
+	<div class="box-header with-border">
+		<i class="fa fa-list"></i><h3 class="box-title">추출된 개체명 전체 항목</h3>
+	</div>
+	<div class="box-body table-responsive no-padding">
+		<table class="table table-hover">
+			<tbody>
+				<tr>
+					<th width="160">속성</th>
+					<th>어구 (연관 데이터)</th>
+				</tr>
+				<tr>
+					<th>실명정보원</th>
+					<td id="list_real_info"></td>
+				</tr>
+				<tr>
+					<th>실명직접인용</th>
+					<td id="list_real_quote"></td>
+				</tr>
+				<tr>
+					<th>실명간접인용</th>
+					<td id="list_real_indir"></td>
+				</tr>
+				<tr>
+					<th>익명정보원</th>
+					<td id="list_anon_info"></td>
+				</tr>
+				<tr>
+					<th>익명직접인용</th>
+					<td id="list_anon_quote"></td>
+				</tr>
+				<tr>
+					<th>익명간접인용</th>
+					<td id="list_anon_indir"></td>
+				</tr>
+				<tr>
+					<th>인물(직책포함)</th>
+					<td id="list_man_job"></td>
+				</tr>
+				<tr>
+					<th>공적인물</th>
+					<td id="list_man_pub"></td>
+				</tr>
+				<tr>
+					<th>실명/익명 기자명</th>
+					<td id="list_man_news"></td>
+				</tr>
+				<tr>
+					<th>기관</th>
+					<td id="list_institute"></td>
+				</tr>
+				<tr>
+					<th>장소</th>
+					<td id="list_place"></td>
+				</tr>
+				<tr>
+					<th>수치 인용</th>
+					<td id="list_number"></td>
+				</tr>
+				<tr>
+					<th>혐오표현/비속어<br>/선정적단어</th>
+					<td id="list_disgust"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<a href="list" class="btn btn-primary">Back</a> &nbsp;
+<button type="button" class="btn btn-danger" onclick="deleteItem()">삭제</button>
+<button type="button" class="btn btn-danger pull-right" onclick="saveAll()">저장</button>
+
+<div class="modal modal-info fade" id="modalAdd">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">개체명 추가 확인</h4>
+			</div>
+			<div class="modal-body">
+
+				<form role="form">
+	                <div class="form-group">
+						<label>개체 속성</label>
+						<input type="text" class="form-control" id="confirmAttr" readonly>
+                	</div>
+					<div class="form-group">
+						<label>선택된 어구</label>
+						<input type="text" class="form-control" id="confirmText" readonly>
+					</div>
+					<div class="form-group">
+						<label>연관 데이터</label>
+						<input type="text" class="form-control" id="confirmMeta">
+					</div>
+				</form>
+			
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline pull-left" data-dismiss="modal">취소</button>
+				<button type="button" class="btn btn-outline" id="mAddOK">추가</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="srcText">{{ .item.Content }}</div>
+
+<form method="POST" action="save" id="fomSave">
+	<input type="hidden" name="_csrf" value="{{ ._csrf }}">
+	<input type="hidden" name="id" value="{{ .item.Id.Hex() }}">
+	<input type="hidden" name="json" id="fomJson">
+</form>
+
+<form method="POST" action="delete" id="fomDelete">
+	<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+	<input type="hidden" name="id" value="{{ .item.Id.Hex() }}">
+</form>
+
+<form method="POST" action="editCate" id="fomEditCate">
+	<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+	<input type="hidden" name="id" value="{{ .item.Id.Hex() }}">
+	<input type="hidden" name="cate" id="fomCate">
+</form>
+
+{{end}}
+
+{{block localJS()}}
+<script>
+
+function updateCate()
+{
+	var cate = $('#manCate').val();
+	if (cate == "")
+	{
+		alert("카테고리를 선택해주십시오.");
+		return;
+	}
+
+	if (confirm("카테고리를 '"+cate+"'로 변경하시겠습니까?"))
+	{
+		showWaitIndi();
+		$('#fomCate').val(cate)
+		$('#fomEditCate').submit();
+	}
+}
+
+function deleteItem()
+{
+	if (!confirm("이 기사를 정답셋 목록에서 삭제하시겠습니까?"))
+		return;
+
+	$("#fomDelete").submit();
+}
+
+function saveAll()
+{
+	if (!confirm("저장하시겠습니까? (기존 변경 내용이 overwrite 됩니다.)"))
+		return;
+
+	var obj = {};
+	for (var ka in attrsDic)
+	{
+		var dic = attrsDic[ka];
+		var arr = [];
+		for (var ki in dic)
+		{
+			arr.push(dic[ki])
+		}
+		obj[ka] = arr;
+	}
+
+	isModified = false;
+	$("#fomJson").val(JSON.stringify(obj));
+	$("#fomSave").submit();
+}
+
+function makeHighlight(kind,idnum,tup)
+{
+	var line = tup[0];
+	var seq = tup[1];
+	var txt = tup[2];
+	var meta = tup[3];
+	//console.log("makeHighlight(%s, %d,%d,%s,%s)", kind, line, seq, txt, meta);
+
+	divLine = $('#L'+line);
+	html = divLine.html();
+	html = html.replace(/&amp;/g, '&');
+
+	var idx = -1;
+	var pos = 0;
+	for (;;)
+	{
+		idx = html.indexOf(txt, pos);
+		pos = idx + txt.length;
+		if (--seq < 0 || idx < 0)
+			break;
+	}
+	
+	if (idx < 0)
+	{
+		console.error("NotFound %dth %s", seq, txt);
+		return;
+	}
+	
+	var span = '<span class="anno '+kind+'" id="Si'+idnum+'" onmouseover="onHoverHL(this,\''+kind+'\','+idnum+')" onmouseout="closeHoverHL()">'+txt+'</span>';
+	html = html.substring(0,idx) + span + html.substring(pos);
+	divLine.html(html);
+}
+
+var popupShowFlags = 0;
+var curPopupNum = 0;
+
+function onOverPopup()
+{
+	popupShowFlags |= 1;
+}
+
+function forceHidePopup()
+{
+	curPopupNum = 0;
+	$("#attrPopup").hide();
+}
+
+function hidePopupDelay()
+{
+	setTimeout(function() {
+		if (popupShowFlags == 0)
+			forceHidePopup();
+	}, 300);	
+}
+
+function onOutPopup()
+{
+	popupShowFlags &= ~1;
+	hidePopupDelay();
+}
+
+function cumulativeOffsetX(elem)
+{
+    var left = 0;
+    do {
+        left += elem.offsetLeft || 0;
+        elem = elem.offsetParent;
+    } while(elem);
+
+    return left;
+};
+
+function onHoverHL(elem,kind,idnum)
+{
+	popupShowFlags |= 2;
+	if (curPopupNum == idnum)
+		return;
+
+	var dat = attrsDic[kind][idnum];
+	if (!dat)
+		return;
+
+	curPopupNum = idnum;
+
+	//console.log("TODO: hover %s,%s,%d", elem,kind,idnum);	
+	var rc = elem.getBoundingClientRect();
+	var pop = $("#attrPopup");
+	pop.show();
+	
+	$("#popText").text(dat[2]);
+	$("#popMeta").text(dat[3] == "" ? "(없음)" : dat[3]);
+	
+	var x = cumulativeOffsetX(elem);
+	var box = pop[0].getBoundingClientRect();
+	var y = rc.top + box.top - box.bottom - 3 + window.scrollY;
+	pop.offset({left: x, top: y});
+}
+
+function closeHoverHL()
+{
+	popupShowFlags &= ~2;
+	hidePopupDelay();
+}
+
+function onDeleteAttr()
+{	
+	var idnum = curPopupNum;
+	var dat = attrsDic[sel_attr][idnum];
+	if (!dat) return;
+
+	var sel_text = $("#popAttr").text();
+	forceHidePopup();
+
+	if (confirm(sel_text + ' ['+dat[2]+'] 항목을 삭제하시겠습니까?'))
+	{
+		$("#Ai"+idnum).replaceWith("");
+		$("#Si"+idnum).replaceWith($("#Si"+idnum).text());
+		delete attrsDic[sel_attr][idnum];
+		isModified = true;
+	}
+}
+
+var seqAttrNo = 0;
+var isModified = false;
+
+function addAnnotItem(kind, line,seq,txt,meta, hl)
+{
+	txt = txt.replace(/&quot;/g, '"');
+	txt = txt.replace(/&amp;/g, '&');
+	if (!attrsDic.hasOwnProperty(kind))
+		attrsDic[kind] = {}
+
+	var tup = [line, seq, txt, meta];
+	attrsDic[kind][++seqAttrNo] = tup;
+
+	if (hl) makeHighlight(kind, seqAttrNo, tup);
+
+	var elem = '<li class="attrListItem" id="Ai'+seqAttrNo+'">'+txt;
+	if (meta != "")
+		elem += ' <span>(' + meta + ')</span>';
+	elem += '</li>';
+
+	$("#list_"+kind).append(elem);
+}
+
+function restoreAttrHighlights()
+{
+	var dic = attrsDic[sel_attr];
+	if (dic == null)
+		return;
+
+	for (var k in dic)
+	{
+		makeHighlight(sel_attr, k, dic[k]);
+	}
+}
+
+var sel_line;
+var sel_seq;
+var sel_text;
+var sel_attr;
+var attrsDic = {};
+
+function countOccurBefore(str, target, limit)
+{
+	var len = target.length;
+	var cnt = 0;
+	var pos = 0;
+	for (;;)
+	{
+		var idx = str.indexOf(target, pos);
+		if (idx < 0) break;
+		if (idx + len > limit) break;
+
+		pos = idx +1;
+		cnt++;
+	}
+
+	return cnt;
+}
+
+function onAreaSelected()
+{
+	var sel = window.getSelection();
+	if (sel == null || sel.anchorNode == null)
+		return;
+
+	var par = $(sel.anchorNode.parentElement);
+	if (!par.hasClass("line"))
+	{
+		return;
+	}
+
+    if (sel.anchorNode.parentNode != sel.focusNode.parentNode)
+    {
+        alert("문장을 걸치거나 기존 영역과 겹쳐서는 안됩니다.");
+        sel.empty();
+        return;
+    }
+
+	var lineId = sel.anchorNode.parentElement.id;
+	if (lineId[0] != 'L')
+		return;
+
+	var seltext = sel.toString().trim();
+	if (seltext == '')
+		return;
+
+	var ipos = sel.anchorOffset < sel.extentOffset ? sel.anchorOffset : sel.extentOffset;
+
+	var cntOccur = countOccurBefore(sel.anchorNode.textContent, seltext, ipos);
+
+	var sibling = sel.anchorNode.previousSibling;
+	while (sibling != null)
+	{
+		var ftxt = $(sibling).text();
+		cntOccur += countOccurBefore(ftxt, seltext, ftxt.length);
+		sibling = sibling.previousSibling;
+	}
+
+	sel_text = seltext;
+	sel_line = parseInt(lineId.substr(1));
+	sel_seq = cntOccur;
+
+	$("#confirmText").val(sel_text);
+	$("#confirmMeta").val("");
+	$('#modalAdd').modal();
+}
+function resetWorkarea()
+{
+	var workarea = $('#workarea');
+	workarea.html("");
+
+	var lineNum = 0;
+    $("#srcText").text().split("\n").forEach(function(line) {
+        line = line.trim();
+        if (line == '') {
+            workarea.append("<br>");
+            return;
+        }
+
+        lineNum++;
+        workarea.append('<div class="line" id="L'+lineNum+'">'+line+'</div>');
+	});
+}
+
+
+$(function() {
+	$('#workarea').on("mouseup", onAreaSelected);
+	resetWorkarea();
+
+	$('#modalAdd').on('shown.bs.modal', function () { //bootstrap event
+		$('#confirmText').select();
+	});
+
+	$('#confirmText').on('keydown', function( event ) {
+		if (event.which == 13 || event.which == 65) { //enter, a
+			$('#mAddOK').click();
+		}
+	});
+
+	$('#confirmMeta').on('keydown', function( event ) {
+		if (event.which == 13) { //enter
+			$('#mAddOK').click();
+		}
+	});
+
+	$("#mAddOK").click(function() {
+		$('#modalAdd').modal('hide');
+		var meta = $("#confirmMeta").val();
+		addAnnotItem(sel_attr, sel_line,sel_seq,sel_text,meta, true);
+		isModified = true;
+	});
+
+	$('#attrs input[type=radio]').on('change', function() {
+		var attr = $('input[name=attr]:checked', '#attrs');
+		sel_attr = attr.val();
+		var sel_text = attr.parent().text();
+		$("#popAttr").text(sel_text);
+		$("#confirmAttr").val(sel_text);
+		resetWorkarea();
+		restoreAttrHighlights();
+	});
+
+{{ range tup := .item.RealInfo }}
+	addAnnotItem("real_info", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.RealQuote }}
+	addAnnotItem("real_quote", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.RealIndir }}
+	addAnnotItem("real_indir", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+
+{{ range tup := .item.AnonInfo }}
+	addAnnotItem("anon_info", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.AnonQuote }}
+	addAnnotItem("anon_quote", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.AnonIndir }}
+	addAnnotItem("anon_indir", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+
+{{ range tup := .item.ManJob }}
+	addAnnotItem("man_job", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.ManPub }}
+	addAnnotItem("man_pub", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.ManNews }}
+	addAnnotItem("man_news", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+
+{{ range tup := .item.Institute }}
+	addAnnotItem("institute", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.Place }}
+	addAnnotItem("place", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.Number }}
+	addAnnotItem("number", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+{{ range tup := .item.Disgust }}
+	addAnnotItem("disgust", {{tup.Line}}, {{tup.Seq}}, "{{tup.Text|safeJs}}", "{{tup.Meta|safeJs}}", false);
+{{ end }}
+
+	$("#defAttr").click();
+
+	window.addEventListener("beforeunload", function (e) {
+		if (!isModified)
+			return undefined;
+			
+    	var confirmationMessage = "변경사항을 저장하지 않고 이 페이지를 벗어나시겠습니까?";
+
+    	(e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    	return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+	});
+
+	hideWaitIndi();
+});
+
+</script>
+{{end}}

@@ -1,0 +1,123 @@
+{{extends "layout_admin.html"}}
+{{block title()}}조사{{end}}
+{{block localCSS()}}
+{{end}}
+
+{{block chead()}}
+<h1>조사<small>토씨</small></h1>
+{{end}}
+
+{{block body()}}
+{{ if .pos.Id == "" }}{{ cmd = "new" }}{{else}}{{ cmd = "edit" }}{{end}}
+<div class="box box-primary">
+    <form role="form" name="f1" method="POST" onsubmit="return sbmChk()">
+    <input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+    <input type="hidden" name="id" value="{{ .pos.Id.Hex() }}">
+    <input type="hidden" name="cmd" value="{{cmd}}">
+        <div class="box-body">
+            <div class="form-group">
+                <label for="word">어절</label>
+                <input type="text" class="form-control" id="word" name="word" placeholder="조사 입력" value="{{.pos.Word}}">
+            </div>
+
+            <div class="form-group">
+                <label>앞음절 받침 조건</label>
+                <div class="radio">
+                <label>
+                    <input type="radio" name="zong" value="0"{{ if .pos.Zong == 0 }} checked{{end}}>
+                    받침 여부 상관 없음
+                </label>
+                </div>
+                <div class="radio">
+                <label>
+                    <input type="radio" name="zong" value="1"{{ if .pos.Zong == 1 }} checked{{end}}>
+                    받침이 있어야 함 (예: 을,이,으로 ...)
+                </label>
+                </div>
+                <div class="radio">
+                <label>
+                    <input type="radio" name="zong" value="2"{{ if .pos.Zong == 2 }} checked{{end}}>
+                    받침이 없어야 함 (예: 를,가,로 ...)
+                </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>메타 정보</label>
+                <select name="meta" class="form-control select2" multiple="multiple" data-placeholder="메타 정보를 입력해주세요." style="width: 100%;">
+                    {{ range meta := .metaOpts }}
+					<option{{ if hasElement(.pos.Meta, meta) }} selected="selected"{{end}}>{{meta}}</option>
+					{{ end }}
+                </select>
+			</div>
+
+        </div>
+
+        <div class="box-footer">
+            {{ if cmd == "new" }}
+            <button type="submit" class="btn btn-primary">추가</button>
+            {{else}}
+            <button type="submit" class="btn btn-success">수정</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dlgConfirm">삭제</button>
+            <button type="button" class="btn btn-primary pull-right" onclick="onAddNew()">신규 등록</button>
+            {{end}}
+        </div>
+    </form>
+</div>
+
+<div class="modal fade modal-danger" id="dlgConfirm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">정말 삭제하시겠습니까?</h4>
+            </div>
+            <div class="modal-body">
+                <p>조사: "{{ .pos.Word }}"</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-outline" onclick="onDelete()">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{block localJS()}}
+<script src="/public/js/select2.full.min.js"></script>
+<script>
+function sbmChk()
+{
+    var f1 = document.forms["f1"];
+
+    if (f1.word.value.trim() == "") {
+        alert("어절을 입력해주세요.");
+        return false;
+    }
+
+    return true;
+}
+
+function onDelete()
+{
+    document.forms["f1"].cmd.value = "del";
+    document.forms["f1"].submit();
+}
+function onAddNew()
+{
+    if (!sbmChk())
+        return;
+
+    document.forms["f1"].cmd.value = "new";
+    document.forms["f1"].submit();
+}
+
+$(function () {
+	$('select').select2();
+	hideWaitIndi();
+});
+</script>
+{{end}}

@@ -1,0 +1,294 @@
+{{extends "layout_admin.html"}}
+{{block title()}}시스템로그{{end}}
+
+{{block localCSS()}}
+<style>
+tr.lv1:hover {
+	background-color: #eee;
+}
+.lv1 .txt {
+	color: #888;
+}
+.lv1 .badge {
+	background-color: #888;
+}
+
+tr.lv3:hover {
+	background-color: #eee;
+}
+.lv3 .txt {
+	 color: #000;
+}
+.lv3 .badge {
+	background-color: #000;
+}
+
+tr.lv5:hover {
+	background-color: #dfd;
+}
+.lv5 .txt {
+	color: #0a0;
+}
+.lv5 .badge {
+	background-color: #0a0;
+}
+
+tr.lv6:hover {
+	background-color: #fea;
+}
+.lv6 .txt {
+	color: #f80;
+}
+.lv6 .badge {
+	background-color: #f80;
+}
+
+tr.lv7:hover {
+	background-color: #fdd;
+}
+.lv7 .txt {
+	color: #f00;
+}
+.lv7 .badge {
+	background-color: #f00;
+}
+
+tr.lv9:hover {
+	background-color: #fdd;
+}
+.lv9 .txt {
+	color: #f00;
+	font-weight: bold;
+}
+.lv9 .badge {
+	background-color: #f00;
+}
+.txt.msg {
+	word-wrap: break-word;
+}
+span.tag {
+	cursor: pointer;
+}
+span.tag:hover {
+	text-decoration: underline;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+	<h1>시스템 이벤트 로그 <i class="fa fa-refresh" onclick="requestPage(0)"></i></h1>
+	<ol class="breadcrumb">
+		<li><a href="/admin/dashboard"><i class="fa fa-home"></i> Home</a></li>
+		<li><a href="#"><i class="fa fa-cogs"></i> 시스템 관리</a></li>
+		<li class="active"><i class="fa fa-list-alt"></i> 이벤트 로그</li>
+	</ol>
+{{end}}
+
+{{block body()}}
+<div class="box box-success">
+	<div class="box-header">
+		<h3 class="box-title">태그 필터: <input type="text" size="24" id="filterTag">
+		<i class="fa fa-remove" id="btnClear" onclick="onChangeTag('')"></i></h3>
+
+		<div class="pull-right">
+			<select class="form-control" id="logLevel" onchange="requestPage(0)">
+				<option value="1">TRACE</option>
+				<option value="3">DEBUG</option>
+				<option value="5">INFO</option>
+				<option value="6">WARN</option>
+				<option value="7">ERROR</option>
+				<option value="9">FATAL</option>
+			</select>
+		</div>
+
+	</div>
+
+	<div class="box-body no-padding">
+		<table class="table" style="table-layout:fixed">
+			<thead>
+			<tr>
+				<th width="132">Timestamp</th>
+				<th width="100">IP-Addr</th>
+				<th width="120">Tag</th>
+				<th width="32">Lv</th>
+				<th>Message</th>
+			</tr>
+			</thead>
+			<tbody id="logRows">
+			</tbody></table>
+	</div>
+
+	<div class="box-footer clearfix">
+		<label><input type="checkbox" id="lvOnly" onchange="requestPage(0)"> 해당 레벨 로그만 보기</label>
+		<ul class="pagination pagination-sm no-margin pull-right" id="logPages">
+		</ul>
+	</div>
+</div>
+
+{{`
+<script id="tplRows" type="text/html">
+{{ var lvNames = {1:'Trace',3:'Debug',5:'Info',6:'Warn',7:'Error',9:'Fatal'}; for(var idx in it) { var row = it[idx]; }}
+<tr class="lv{{=row.lv}}">
+	<td>{{=row.ts}}</td>
+	<td class="txt">{{=row.ip}}</td>
+	<td><span class="tag" onclick="onClickTag(this)">{{=row.tag}}</span></td>
+	<td><span class="badge" data-toggle="tooltip" title="{{= lvNames[row.lv] }}">{{= lvNames[row.lv][0] }}</span></td>
+	<td class="txt msg">{{=row.msg}}</td>
+</tr>
+{{ } if (it.length == 0) { }}
+<tr>
+	<td colspan="5" style="color:red; text-align:center">로그 데이터가 없습니다.</td>
+</tr>
+{{ } }}
+</script>
+
+<script id="tplPages" type="text/html">
+{{ if (it.page > 0) { }}<li><a onclick="loadPage({{=it.page}} -1)">«</a></li>{{ } }}
+{{
+var showHead = it.page >= 4;
+var showTail = it.total - it.page > 4;
+var pL=0;
+if (showHead) { pL=it.page -1; }}
+	<li><a onclick="loadPage(0)">1</a></li>
+	<li><a>...</a></li>
+{{ }
+
+	var box = (showHead && showTail) ? 3:5;
+	if (showHead && !showTail)
+	{
+		pL = it.total -5;
+	}
+
+	for (var b=0; b<box; b++)
+	{
+		var pg = pL+b;
+		var pN = pg+1;
+		if (pN > it.total) break;
+
+		if (pg == it.page)
+		{
+			}}<li class="active"><a>{{=pN}}</a></li>{{
+		}
+		else
+		{
+			}}<li><a onclick="loadPage({{=pg}})">{{=pN}}</a></li>{{
+		}
+	}
+
+if (showTail) { }}
+	<li><a>...</a></li>
+	<li><a onclick="loadPage({{=it.total -1}})">{{=it.total}}</a></li>
+{{ } }}
+
+{{ if (it.page < it.total) { }}
+<li><a onclick="loadPage({{=it.page +1}})">»</a></li>
+{{ } }}
+</script>
+`| raw}}
+
+{{ end}}
+
+{{block localJS()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.1.0/doT.min.js"></script>
+<script>
+var tplRows;
+var tplPages;
+var curFilterTag;
+
+function setCurTag(tg)
+{
+	curFilterTag = tg;
+	$("#filterTag").val(tg);
+
+	if (tg == '')
+		$('#btnClear').hide();
+	else
+		$('#btnClear').show();
+}
+
+function requestPage(pgNum)
+{
+	var sel = $('#logLevel')[0];
+	var lvMin = sel.options[sel.selectedIndex].value;
+	var lvMax = $("#lvOnly").prop("checked") ? lvMin : 10;
+
+	showWaitIndi();
+	$.ajax({
+		method: "GET",
+		url: "/admin/syslog.json",
+		data: {
+			"pg": pgNum,
+			"rows": 15,
+			"lvMin": lvMin,
+			"lvMax": lvMax,
+			"tag": curFilterTag
+		},
+		success: function(data) {
+			$("#logRows").html(tplRows(data.rows));
+			$("#logPages").html(tplPages(data));
+		},
+		error: function (xhr, ajaxOptions, thrownError) {
+			alert("failed ajax!");
+		},
+		complete: function() {
+			hideWaitIndi();
+		}
+	});
+}
+
+function onChangeTag(tg)
+{
+	if (tg == curFilterTag)
+		return;
+
+	var ok;
+	if (tg == '')
+	{
+		ok = confirm("태그 필터링을 제거하여 전체 로그를 보시겠습니까?");
+	}
+	else
+	{
+		ok = confirm("태그 필터링을 적용하여 '"+tg+"'를 포함하는 로그만 보시겠습니까?");
+	}
+
+	if (ok)
+	{
+		curFilterTag = tg;
+		requestPage(0);
+	}
+
+	setCurTag(curFilterTag);
+}
+
+function onClickTag(spn)
+{
+	var tg = spn.innerText;
+	if (tg == curFilterTag)
+	{
+		alert("이미 현재 필터링 태그와 같습니다.");
+		return;
+	}
+
+	onChangeTag(tg);
+}
+
+function loadPage(pg)
+{
+	requestPage(pg);
+}
+
+$(function() {
+	tplRows = doT.template($('#tplRows').html());
+	tplPages = doT.template($('#tplPages').html());
+
+	$('#filterTag').on('keyup', function(e) {
+		if (e.keyCode === 13) {
+			onChangeTag($(this).val().trim())
+		}
+	});
+
+	setCurTag('');
+	requestPage(0);
+});
+</script>
+{{ end }}

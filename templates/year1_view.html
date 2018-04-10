@@ -1,0 +1,646 @@
+{{extends "layout_admin.html"}}
+{{block title()}}1차년도 DB 상세 정보{{end}}
+{{block localCSS()}}
+<style>
+.news_content {
+	line-height: 2em;
+}
+.news_content i {
+	color: #ccc;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>1차년도 DB 상세 정보 <small>{{ .item.Title }}</small></h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-info">
+    <div class="box-body">
+		<table class="matrix">
+			<tr>
+				<th width="110">Object ID</th>
+				<td>{{ .item.Id.Hex() }}</td>
+			</tr>
+			<tr>
+				<th>News ID</th>
+				<td>{{ .item.NewsId }}
+					( <a href="/admin/news/view?nws={{ .item.NewsId }}">처리DB보기</a> )
+				</td>
+			</tr>
+			<tr>
+				<th>_embargo_dt</th>
+				<td>{{ .item.EmbagoDt }}</td>
+			</tr>
+			<tr>
+				<th>_envelop_time</th>
+				<td>{{ .item.EnvelopTime }}</td>
+			</tr>
+			<tr>
+				<th>_time</th>
+				<td>{{ .item.Time }}</td>
+			</tr>
+			<tr>
+				<th>카테고리 코드</th>
+				<td>{{ range category := .item.Category }}{{ category }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>category_incident</th>
+				<td>{{ range ci := .item.CategoryIncident }}{{ ci }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>character_counter</th>
+				<td>{{ .item.CharacterCounter }}</td>
+			</tr>
+			<tr>
+				<th>coi_code</th>
+				<td>{{ .item.CoiCode }}</td>
+			</tr>
+			<tr>
+				<th>날짜</th>
+				<td>{{ .item.Date }}</td>
+			</tr>
+			<tr>
+				<th>제목</th>
+				<td>{{ .item.Title }}</td>
+			</tr>
+			<tr>
+				<th>기사내용<br>(필터링 전)</th>
+				<td class="news_content">{{ .item.Content|linebreaksCRBR|raw }}</td>
+			</tr>
+			<tr>
+				<th>dateline</th>
+				<td>{{ .item.Dateline }}</td>
+			</tr>
+			<tr>
+				<th>dateline_date</th>
+				<td>{{ .item.DatelineDate }}</td>
+			</tr>
+			<tr>
+				<th>genre_info</th>
+				<td>{{ .item.GenreInfo }}</td>
+			</tr>
+			<tr>
+				<th>videos</th>
+				<td>{{ range vid := .item.Videos }}{{ vid }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>articles</th>
+				<td>{{ range atc := .item.Articles }}{{ atc }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>tags</th>
+				<td>{{ range tag := .item.Tags }}{{ tag }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>images</th>
+				<td>{{ range img := .item.Images }}{{ img }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>ks_company</th>
+				<td>{{ range ks := .item.KsCompany }}{{ ks }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>ks_organ</th>
+				<td>{{ range ks := .item.KsOrgan }}{{ ks }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>ks_people</th>
+				<td>{{ range ks := .item.KsPeople }}{{ ks }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>page_category</th>
+				<td>{{ .item.PageCategory }}</td>
+			</tr>
+			<tr>
+				<th>paper_edition</th>
+				<td>{{ .item.PaperEdition }}</td>
+			</tr>
+			<tr>
+				<th>printing_page</th>
+				<td>{{ .item.PrintingPage }}</td>
+			</tr>
+			<tr>
+				<th>printing_page_no</th>
+				<td>{{ .item.PrintingPageNo }}</td>
+			</tr>
+			<tr>
+				<th>provider_code</th>
+				<td>{{ .item.ProviderCode }}</td>
+			</tr>
+			<tr>
+				<th>provider_link_exist</th>
+				<td>{{ .item.ProviderLinkExist }}</td>
+			</tr>
+			<tr>
+				<th>빅카인즈 url</th>
+				<td>{{ .item.ProviderLinkPage }}</td>
+			</tr>
+			<tr>
+				<th>provider_mlink_page</th>
+				<td>{{ .item.ProviderMlinkPage }}</td>
+			</tr>
+			<tr>
+				<th>provider_news_id</th>
+				<td>{{ .item.ProviderNewsId }}</td>
+			</tr>
+			<tr>
+				<th>provider_subject</th>
+				<td>{{ range sj := .item.ProviderSubject }}{{ sj }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>publisher_code</th>
+				<td>{{ .item.PublisherCode }}</td>
+			</tr>
+			<tr>
+				<th>publishing_status</th>
+				<td>{{ .item.PublishingStatus }}</td>
+			</tr>
+			<tr>
+				<th>revision</th>
+				<td>{{ .item.Revision }}</td>
+			</tr>
+			<tr>
+				<th>rightsline</th>
+				<td>{{ .item.RightsLine }}</td>
+			</tr>
+			<tr>
+				<th>seriesline</th>
+				<td>{{ .item.SeriesLine }}</td>
+			</tr>
+			<tr>
+				<th>sub_title</th>
+				<td>{{ range st := .item.SubTitle }}{{ st }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>subject_info1</th>
+				<td>{{ range si := .item.SubjectInfo1 }}{{ si }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>subject_info2</th>
+				<td>{{ range si := .item.SubjectInfo2 }}{{ si }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>subject_info3</th>
+				<td>{{ range si := .item.SubjectInfo3 }}{{ si }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>urgency</th>
+				<td>{{ .item.Urgency }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_LOCATION</th>
+				<td>{{ .item.TmsNeLocation }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_ORGANIZATION</th>
+				<td>{{ .item.TmsNeOrganization }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_PERSON</th>
+				<td>{{ .item.TmsNePerson }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_STREAM</th>
+				<td>{{ .item.TmsNeStream }}</td>
+			</tr>
+			<tr>
+				<th>TMS_RAW_STREAM</th>
+				<td>{{ .item.TmsRawStream }}</td>
+			</tr>
+			<tr>
+				<th>TMS_SIMILARITY</th>
+				<td>{{ .item.TmsSimilarity }}</td>
+			</tr>
+			<tr>
+				<th>내용길이(필터링 전</th>
+				<td>{{ .item.ContentsLength }}</td>
+			</tr>
+			<tr>
+				<th>제목길이</th>
+				<td>{{ .item.TitleLength }}</td>
+			</tr>
+			<tr>
+				<th>제목단어수</th>
+				<td>{{ .item.WordsInTitle }}</td>
+			</tr>
+			<tr>
+				<th>링크수(빅카인즈데이터</th>
+				<td>{{ .item.AttachmentLinks }}</td>
+			</tr>
+			<tr>
+				<th>멀티미디어수(동영상</th>
+				<td>{{ .item.AttachmentMultimedia }}</td>
+			</tr>
+			<tr>
+				<th>표개수</th>
+				<td>{{ .item.AttachmentTables }}</td>
+			</tr>
+			<tr>
+				<th>수치인용수(%,퍼센트)</th>
+				<td>{{ range fg := .item.Figures }}{{ fg }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>카드뉴스여부(제목에서'카드뉴스' '카드뉴스'추출)</th>
+				<td>{{ .item.AttachmentCardnews }}</td>
+			</tr>
+			<tr>
+				<th>objects</th>
+				<td>{{ .item.Objects }}</td>
+			</tr>
+			<tr>
+				<th>제목에[단독,기획,속보]쓴 기사</th>
+				<td>{{ .item.AbuseTitles }}</td>
+			</tr>
+			<tr>
+				<th>article_clustering</th>
+				<td>{{ .item.ArticleClustering }}</td>
+			</tr>
+			<tr>
+				<th>제목에겹따옴표수(여는것,닫는것각각카운트, 2개가한쌍)</th>
+				<td>{{ .item.PairQuotesInTitle }}</td>
+			</tr>
+			<tr>
+				<th>기사내용<br>(필터링 후)</th>
+				<td class="news_content">{{ .item.SanitizedContent|linebreaksCRBR }}</td>
+			</tr>
+			<tr>
+				<th>문장분리</th>
+				<td>{{ range ss := .item.SanitizedSentences }}
+					"sentence_id"⇨"{{ ss.SentenceId }}",<br>
+					"sentence"⇨"{{ ss.Sentence }}"</br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>문장당단어수(평균</th>
+				<td>{{ .item.WordsPerSentence }}</td>
+			</tr>
+{*<!--			
+			<tr>
+				<th>기사내용 형태소 분류</th>
+				<td>{{ range tc := .item.TaggedContent }}
+					"word"⇨"{{ tc[0] }}",<br>
+					"tag"⇨"{{ tc[1] }}"</br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>제목 형태소 분류</th>
+				<td>{{ range tc := .item.TaggedTitle }}
+					"word"⇨"{{ tc.Word }}",<br>
+					"tag"⇨"{{ tc.Tag }}"</br><br>{{ end }}</td>
+			</tr>
+-->*}
+			<tr>
+				<th>언론재단 url</th>
+				<td>{{ .item.NewsUrl }}</td>
+			</tr>
+			<tr>
+				<th>score</th>
+				<td>{{ .item.Score }}</td>
+			</tr>
+			<tr>
+				<th>원문기사 여부</th>
+				<td>{{ .item.Original }}</td>
+			</tr>
+			<tr>
+				<th>clutster_keyword</th>
+				<td>{{ range ck := .item.ClusterKeyword }}
+					"Keyword"⇨"{{ ck }}",<br>
+					"Count"⇨"{{ ck }}"</br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>기관</th>
+				<td>{{ range ck := .item.Location }}
+					{{ ck }}<br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>직함</th>
+				<td>{{ .item.Role }}</td>
+			</tr>
+			<tr>
+				<th>직업</th>
+				<td>{{ .item.Job }}</td>
+			</tr>
+			<tr>
+				<th>빅카인즈 카테고리 필터링</th>
+				<td>{{ .item.SanitizedBigkindsCategory }}</td>
+			</tr>
+			<tr>
+				<th>언론사</th>
+				<td>{{ .item.SanitizedBigkindsProvider }}</td>
+			</tr>
+			<tr>
+				<th>문장내접속사수</th>
+				<td>{{ .item.ConjunctionsInContent }}</td>
+			</tr>
+			<tr>
+				<th>문장내부사수</th>
+				<td>{{ .item.AdverbsInContent }}</td>
+			</tr>
+			<tr>
+				<th>문장내형용사수</th>
+				<td>{{ .item.AdjectivesInContent }}</td>
+			</tr>
+			<tr>
+				<th>기사내 단어수</th>
+				<td>{{ .item.WordNum }}</td>
+			</tr>
+			<tr>
+				<th>인명 수</th>
+				<td>{{ .item.PersonCount }}</td>
+			</tr>
+			<tr>
+				<th>지역 수</th>
+				<td>{{ .item.LocationCount }}</td>
+			</tr>
+			<tr>
+				<th>본문에 나온 수치문 개수</th>
+				<td>{{ .item.FiguresCount }}</td>
+			</tr>
+			<tr>
+				<th>본문에 나온 동음이의어 개수</th>
+				<td>{{ .item.HomonymCount }}</td>
+			</tr>
+			<tr>
+				<th>예상 카테고리</th>
+				<td>{{ .item.PredictedCategory }}</td>
+			</tr>
+			<tr>
+				<th>기자명 필터링</th>
+				<td>{{ .item.FillteringSanitizedByline }}</td>
+			</tr>
+			<tr>
+				<th>기관 수</th>
+				<td>{{ .item.OrganizationCount }}</td>
+			</tr>
+			<tr>
+				<th>정책 수</th>
+				<td>{{ .item.PoliticsCount }}</td>
+			</tr>
+			<tr>
+				<th>상품 수</th>
+				<td>{{ .item.ProductCount }}</td>
+			</tr>
+			<tr>
+				<th>사건 수</th>
+				<td>{{ .item.EventCount }}</td>
+			</tr>
+			<tr>
+				<th>본문에 나온 직함 개수</th>
+				<td>{{ .item.RoleCount }}</td>
+			</tr>
+			<tr>
+				<th>본문에 나온 직업 개수</th>
+				<td>{{ .item.JobCount }}</td>
+			</tr>
+			<tr>
+				<th>본문에 나온 대치문 개수</th>
+				<td>{{ .item.ReplaceCount }}</td>
+			</tr>
+			<tr>
+				<th>빅카인즈에서 받은 기자명</th>
+				<td>{{ .item.BylineForSubmit }}</td>
+			</tr>
+			<tr>
+				<th>기사내용 형태소 분류[단어, 문장 index] - 고유명사(NNP)태그</th>
+				<td>{{ range tc := .item.TaggedContentNNP }}
+					"word"⇨"{{ tc.Word }}",<br>
+					"index"⇨"{{ tc.SentenceIndex }}"</br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>기사내용 형태소 분류[단어, 카테고리, 문장 id, 문장] - 고유명사(NNP)태그</th>
+				<td>{{ range tc := .item.TaggedContentNNPSentence }}
+					"word"⇨"{{ tc.Word }}",<br>
+					"index"⇨"{{ tc.SentenceIndex }}",<br>
+					"id"⇨"{{ tc.SentenceId }}",<br>
+					"sentence"⇨"{{ tc.Sentence }}"</br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>기사내용 형태소 분류[단어, 문장 index] - 개체명</th>
+				<td>{{ range tc := .item.TaggedContentEntity }}
+					"word"⇨"{{ tc.Word }}",<br>
+					"category"⇨"{{ tc.Category }}",<br>
+					"index"⇨"{{ tc.SentenceIndex }}",<br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>during</th>
+				<td>{{ .item.During }}</td>
+			</tr>
+			<tr>
+				<th>entities_count</th>
+				<td>{{ .item.EntitiesCount }}</td>
+			</tr>
+			<tr>
+				<th>title_length_for_submit</th>
+				<td>{{ .item.TitleLengthForSubmit }}</td>
+			</tr>
+			<tr>
+				<th>중복도</th>
+				<td>{{ range tc := .item.Duplications }}
+					"value"⇨"{{ tc.Value }}",<br>
+					"news_id"⇨"{{ tc.NewsId }}",<br><br>{{ end }}</td>
+			</tr>
+			<tr>
+				<th>topic_id</th>
+				<td></td>
+			</tr>
+			<tr>
+				<th>cluster_id</th>
+				<td>{{ .item.ClusterId.Hex() }}</td>
+			</tr>
+<!--			
+			<tr>
+				<th>클러스터링 ID</th>
+				<td>{{ .item.ClusterIds }}</td>
+			</tr>
+-->			
+			<tr>
+				<th>빅마인즈 대표 카테고리</th>
+				<td>{{ .item.BigkindsFirstCategory }}</td>
+			</tr>
+			<tr>
+				<th>필터링 제목길이</th>
+				<td>{{ .item.SanitizedTitleLength }}</td>
+			</tr>			
+			<tr>
+				<th>요인 점수 - 제목길이</th>
+				<td>{{ .item.ScoreSanitizedTitleLength }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 기사길이</th>
+				<td>{{ .item.ScoreSanitizedContentLength }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 문장 수</th>
+				<td>{{ .item.ScoreSentencesNum }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 문장당 형용사 수</th>
+				<td>{{ .item.ScoreAdjectivesPerSentence }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 문장당 접속사 수</th>
+				<td>{{ .item.ScoreConjunctionsPerSentence }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 문장당 부사 수</th>
+				<td>{{ .item.ScoreAdverbsPerSentence }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 제목의 부사 수</th>
+				<td>{{ .item.ScoreAdverbsInTitle }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 이미지 수</th>
+				<td>{{ .item.ScoreAttachmentImages }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 제목에 홑따옴표 수</th>
+				<td>{{ .item.ScoreQuotesInTitle }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 제목에 물음표 수</th>
+				<td>{{ .item.ScoreQuestionInTitle }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 제목에 느낌표 수</th>
+				<td>{{ .item.ScoreExclamationInTitle }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 제목에 어뷰징타이틀('충격', '이럴수가', '이럴 수가') 개수</th>
+				<td>{{ .item.ScoreShockInTitle }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 제목-본문일치도(제목의 명사,동사,형용사,부사)</th>
+				<td>{{ .item.ScoreArticleSimilarity }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 인용문수</th>
+				<td>{{ .item.ScoreQuotesNum }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 한 문장안에 인용문이 2개이상인 기사의 인용문 개수</th>
+				<td>{{ .item.ScoreQuotesMany }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 인용문의 문장 길이 평균</th>
+				<td>{{ .item.ScoreQuotesLength }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 속보 수</th>
+				<td>{{ .item.ScoreBulletin }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 기획 수</th>
+				<td>{{ .item.ScorePlan }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 단독 수</th>
+				<td>{{ .item.ScoreExclusive }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 - 기명기사</th>
+				<td>{{ .item.ScoreByline }}</td>
+			</tr>
+			<tr>
+				<th>내용길이(필터링 후</th>
+				<td>{{ .item.SanitizedContentLength }}</td>
+			</tr>
+			<tr>
+				<th>기사내문장수</th>
+				<td>{{ .item.SentencesNum }}</td>
+			</tr>
+			<tr>
+				<th>문장당형용사수</th>
+				<td>{{ .item.AdjectivesPerSentence }}</td>
+			</tr>
+			<tr>
+				<th>문장당접속사수</th>
+				<td>{{ .item.ConjunctionsPerSentence }}</td>
+			</tr>
+			<tr>
+				<th>문장당부사수</th>
+				<td>{{ .item.AdverbsPerSentence }}</td>
+			</tr>
+			<tr>
+				<th>제목의부사수</th>
+				<td>{{ .item.AdverbsInTitle }}</td>
+			</tr>
+			<tr>
+				<th>이미지수(빅카인즈데이터</th>
+				<td>{{ .item.AttachmentImages }}</td>
+			</tr>
+			<tr>
+				<th>제목-본문일치도(제목의 명사,동사,형용사,부사)</th>
+				<td>{{ .item.ArticleSimilarity }}</td>
+			</tr>
+			<tr>
+				<th>제목에홑따옴표수 (여는것,닫는것각각카운트, 2개가한쌍)</th>
+				<td>{{ .item.QuotesInTitle }}</td>
+			</tr>
+			<tr>
+				<th>제목에물음표수</th>
+				<td>{{ .item.QuestionInTitle }}</td>
+			</tr>
+			<tr>
+				<th>제목에느낌표수</th>
+				<td>{{ .item.ExclamationInTitle }}</td>
+			</tr>
+			<tr>
+				<th>어뷰징타이틀('충격', '이럴수가', '이럴 수가')</th>
+				<td>{{ .item.ShockInTitle }}</td>
+			</tr>
+			<tr>
+				<th>인용문수</th>
+				<td>{{ .item.QuotesNum }}</td>
+			</tr>
+			<tr>
+				<th>한 문장안에 인용문이 2개이상인 기사의 인용문 개수</th>
+				<td>{{ .item.QuotesMany }}</td>
+			</tr>
+			<tr>
+				<th>인용문의 문장 길이 평균</th>
+				<td>{{ .item.QuotesLength }}</td>
+			</tr>
+			<tr>
+				<th>속보 수</th>
+				<td>{{ .item.Bulletin }}</td>
+			</tr>
+			<tr>
+				<th>기획</th>
+				<td>{{ .item.Plan }}</td>
+			</tr>
+			<tr>
+				<th>단독 수</th>
+				<td>{{ .item.Exclusive }}</td>
+			</tr>
+			<tr>
+				<th>요인 점수 총점</th>
+				<td>{{ .item.ScoreSum }}</td>
+			</tr>
+
+
+			<tr>
+				<th>중복도 최저 값</th>
+				<td>{{ .item.DuplicationsMinValue }}</td>
+			</tr>
+			<tr>
+				<th>중복도 최고 값</th>
+				<td>{{ .item.DuplicationsMaxValue }}</td>
+			</tr>
+			<tr>
+				<th>dbviewer_url</th>
+				<td><a href="{{ .item.DbviewerUrl }}" target="_blank">{{ .item.DbviewerUrl }}</a></td>
+			</tr>
+		</table>
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary" onclick="window.history.back()">Back</button>
+
+{{end}}
+
+{{block localJS()}}
+<script>
+$(window).load(function(){ hideWaitIndi(); });
+</script>
+{{end}}

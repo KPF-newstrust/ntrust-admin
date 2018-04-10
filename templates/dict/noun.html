@@ -1,0 +1,129 @@
+{{extends "layout_admin.html"}}
+{{block title()}}명사{{end}}
+{{block localCSS()}}
+<style>
+.checkbox label span {
+	color: #888;
+	font-size: 0.85em;
+}	
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>명사</h1>
+{{end}}
+
+{{block body()}}
+{{ if .pos.Id == "" }}{{ cmd = "new" }}{{else}}{{ cmd = "edit" }}{{end}}
+<div class="box box-primary">
+    <form role="form" name="f1" method="POST" onsubmit="return sbmChk()">
+    <input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+    <input type="hidden" name="id" value="{{ .pos.Id.Hex() }}">
+    <input type="hidden" name="cmd" value="{{ cmd }}">
+        <div class="box-body">
+            <div class="form-group">
+                <label for="word">어절</label>
+                <input type="text" class="form-control" id="word" name="word" placeholder="명사 입력" value="{{.pos.Word}}">
+            </div>
+
+            <div class="form-group">
+				<div class="col-sm-4">
+					<label>개체명 인식 메타 정보</label>
+					<div class="checkbox">
+						<label><input type="checkbox" name="ne0" value="성명"{{ if hasElement(.pos.Meta, "성명")}} checked{{end}}>성명 <span>(예: 김대중)</span></label><br>
+						<label><input type="checkbox" name="ne1" value="이름"{{ if hasElement(.pos.Meta, "이름")}} checked{{end}}>이름 <span>(예: 대중,영삼)</span></label><br>
+						<label><input type="checkbox" name="ne2" value="성씨"{{ if hasElement(.pos.Meta, "성씨")}} checked{{end}}>성씨 <span>(예: 김,이)</span></label><br>
+						<label><input type="checkbox" name="ne3" value="호칭"{{ if hasElement(.pos.Meta, "호칭")}} checked{{end}}>지위 및 호칭 <span>(예: 씨,교수,회장)</span></label><br>
+						<label><input type="checkbox" name="ne4" value="사람"{{ if hasElement(.pos.Meta, "사람")}} checked{{end}}>사람 명사 <span>(예: 지도자,건설업자)</span></label><br>
+						<br>
+						<label><input type="checkbox" name="ne5" value="지명"{{ if hasElement(.pos.Meta, "지명")}} checked{{end}}>지명 <span>(예: 서울,부산)</span></label><br>
+						<label><input type="checkbox" name="ne6" value="지명결합"{{ if hasElement(.pos.Meta, "지명결합")}} checked{{end}}>지명 결합 명사 <span>(예: 시,도)</span></label><br>
+						<label><input type="checkbox" name="ne7" value="장소"{{ if hasElement(.pos.Meta, "장소")}} checked{{end}}>장소 <span>(예: 지역,동해안)</span></label><br>
+						<br>
+						<label><input type="checkbox" name="ne8" value="조직명"{{ if hasElement(.pos.Meta, "조직명")}} checked{{end}}>조직명 <span>(예: 공정거래위원회)</span></label><br>
+						<label><input type="checkbox" name="ne9" value="조직"{{ if hasElement(.pos.Meta, "조직")}} checked{{end}}>조직 명사 <span>(예: 위원회,은행,회사)</span></label><br>						
+						<br>
+						<label><input type="checkbox" name="ne10" value="국가명"{{ if hasElement(.pos.Meta, "국가명")}} checked{{end}}>국가명 <span>(예: 한국,미국)</span></label><br>
+					</div>
+				</div>
+				<div class="col-sm-8">
+					<label>기타 메타 정보</label>
+					<select name="meta" class="form-control select2" multiple="multiple" data-placeholder="메타 정보를 선택해주세요." style="width: 100%;">
+						{{ range meta := .metaOpts }}
+						<option{{ if hasElement(.pos.Meta, meta) }} selected="selected"{{end}}>{{meta}}</option>
+						{{ end }}
+					</select>
+				</div>
+			</div>
+
+        </div>
+
+        <div class="box-footer">
+            {{ if cmd == "new" }}
+            <button type="submit" class="btn btn-primary">추가</button>
+            {{else}}
+            <button type="submit" class="btn btn-success">수정</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dlgConfirm">삭제</button>
+            <button type="button" class="btn btn-primary pull-right" onclick="onAddNew()">신규 등록</button>
+            {{end}}
+        </div>
+    </form>
+</div>
+
+<div class="modal fade modal-danger" id="dlgConfirm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">정말 삭제하시겠습니까?</h4>
+            </div>
+            <div class="modal-body">
+                <p>명사: "{{ .pos.Word }}"</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-outline" onclick="onDelete()">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{block localJS()}}
+<script src="/public/js/select2.full.min.js"></script>
+<script>
+function sbmChk()
+{
+    var f1 = document.forms["f1"];
+
+    if (f1.word.value.trim() == "") {
+        alert("어절을 입력해주세요.");
+        return false;
+    }
+
+    return true;
+}
+
+function onDelete()
+{
+    document.forms["f1"].cmd.value = "del";
+    document.forms["f1"].submit();
+}
+
+function onAddNew()
+{
+    if (!sbmChk())
+        return;
+
+    document.forms["f1"].cmd.value = "new";
+    document.forms["f1"].submit();
+}
+
+$(function () {
+	$('select').select2();
+	hideWaitIndi();
+});
+</script>
+{{end}}

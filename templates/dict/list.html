@@ -1,0 +1,195 @@
+{{extends "layout_admin.html"}}
+{{block title()}}단어 목록{{end}}
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+<style>
+tfoot input {
+	width: 100%;
+	padding: 3px;
+	box-sizing: border-box;
+}
+tfoot {
+    display: table-header-group;
+}
+select {
+    width: 100%;
+}
+.dataTables_filter {
+    display: none;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>사전 목록 및 검색</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <div class="box-body">
+        <table id="jqdt1" class="table table-bordered table-striped table-hover" width="100%">
+            <thead>
+                <tr>
+                    <th width="110">편집시간</th>
+                    <th width="80">단어</th>
+                    <th width="70">품사</th>
+                    <th>메타정보</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th><input type="text" placeholder="음절 필터" data-column="1"></th>
+                    <th><select id="sel1" data-column="2">
+                        <option value="">전체</option>
+                        <option value="명사">명사</option>
+                        <option value="조사">조사</option>
+                        <option value="부사">부사</option>
+                        <option value="관형사">관형사</option>
+                        <option value="감탄사">감탄사</option>
+                        <option value="용언">용언</option>
+                        <option value="불규칙활용">불규칙활용</option>
+                    </select></th>
+                    <th><select id="sel2" multiple="multiple" data-placeholder="메타 정보 필터" data-column="3">
+                        <option value="성명" title="개체명 인식 정보">성명</option>
+                        <option value="이름" title="개체명 인식 정보">이름</option>
+                        <option value="성씨" title="개체명 인식 정보">성씨</option>
+                        <option value="호칭" title="개체명 인식 정보">지위 및 호칭</option>
+                        <option value="사람" title="개체명 인식 정보">사람 명사</option>
+                        
+                        <option value="지명" title="개체명 인식 정보">지명</option>
+                        <option value="지명결합" title="개체명 인식 정보">지명 결합 명사</option>
+                        <option value="장소" title="개체명 인식 정보">장소</option>
+
+                        <option value="조직명" title="개체명 인식 정보">조직명</option>
+                        <option value="조직" title="개체명 인식 정보">조직 명사</option>
+                        <option value="국가명" title="개체명 인식 정보">국가명</option>
+                        
+                        <option value="목적격" title="조사">목적격</option>
+                        <option value="주격" title="조사">주격</option>
+
+                        <option value="정치인">정치인</option>
+                        <option value="연예인">연예인</option>
+                        <option value="체육인">체육인</option>
+
+                        <option value="행위">행위</option>
+                        <option value="맛">맛</option>
+                    </select></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script src="/public/js/select2.full.min.js"></script>
+<script>
+var jqdt;
+$(function () {
+    jqdt = $("#jqdt1").DataTable({
+        "lengthMenu": [10, 20, 30, 50],
+        "order": [[ 0, 'desc' ]],
+        language: {
+            "infoEmpty": "검색 결과가 없습니다.",
+            "zeroRecords": "검색 결과가 없습니다.",
+            "emptyTable": "테이블에 표시할 내용이 없습니다.",
+            "info": "_TOTAL_ 개의 항목 중 _START_ ~ _END_",
+            "infoFiltered": " (사전 전체 _MAX_ 개)",
+            "lengthMenu": "페이지 당 _MENU_ 항목 표시",
+            "search": "음절 검색:",
+            paginate: {
+                first:    '«',
+                previous: '‹',
+                next:     '›',
+                last:     '»'
+            },
+            aria: {
+                paginate: {
+                    first:    'First',
+                    previous: 'Previous',
+                    next:     'Next',
+                    last:     'Last'
+                }
+            }
+        },
+        serverSide: true,
+        ajax: {
+            url: '/admin/dict/list.json',
+            type: 'POST',
+            data: function (d) {
+                d._csrf = "{{ ._csrf }}";
+            }
+        },
+        columns: [
+            { "data":"ts" },
+            { "data":"word",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    var path;
+                    switch (oData.pos) {
+                        case "명사":
+                            path = "noun";
+                            break;
+                        case "조사":
+                            path = "josa";
+                            break;
+                        case "용언":
+                            path = "predicate";
+                            break;
+                        case "불규칙활용":
+                            path = "irregular";
+                            break;
+                        default:
+                            path = "solo";
+                    }
+                    $(nTd).html('<a href="/admin/dict/'+path+'?id='+oData.DT_RowId+'">'+escapeHtml(sData)+'</a>');
+                }
+            },
+            { "data":"pos",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    if (oData.dpos) sData += ' ('+oData.dpos+')';        
+                    $(nTd).text(sData);
+                }
+            },
+            { "data":"meta", "orderable":false }
+        ]
+    });
+
+    jqdt.columns().every(function () {
+        var that = this;
+ 
+        $('input', this.footer() ).on('keyup change', function() {
+            if (that.search() !== this.value) {
+                that.search(this.value).draw();
+            }
+        });
+
+        $('#sel1', this.footer()).on('change', function() {
+            if (that.search() !== this.value) {
+                that.search(this.value).draw();
+            }
+        });
+
+        $('#sel2', this.footer()).on('change', function() {
+            var values = '';
+            $("#sel2").select2("data").forEach(function(v) {
+                if (values) values += '\t';
+                values += v.id;
+                console.dir(v);
+            });
+            if (that.search() !== values) {
+                that.search(values).draw();
+            }
+        });
+    });
+
+    $('#sel2').select2();
+    applyDtFilters("#jqdt1",jqdt);
+    
+    hideWaitIndi();
+});
+    
+</script>
+{{end}}

@@ -1,0 +1,121 @@
+{{extends "layout_admin.html"}}
+{{block title()}}용언 불규칙 활용{{end}}
+{{block localCSS()}}
+{{end}}
+
+{{block chead()}}
+<h1>용언 불규칙 활용
+</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <form role="form" name="f1" method="POST" onsubmit="return sbmChk()">
+    <input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+    <input type="hidden" name="id" value="{{ .pos.Id.Hex() }}">
+    <input type="hidden" name="cmd" value="{{ if .pos.Id == "" }}new{{else}}edit{{end}}">
+        <div class="box-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <label for="word">어절</label>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3">
+                        <label for="root">용언 원형</label>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3">
+                        <label for="tail">활용 어미</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" id="word" name="word" placeholder="어절" value="{{ .pos.Word }}">
+                    </div>
+                    <div class="col-xs-1">⇐</div>
+                    <div class="col-xs-3">
+                        <input type="text" class="form-control" id="root" name="root" placeholder="용언 원형" value="{{ .pos.Root }}">
+                    </div>
+                    <div class="col-xs-1">+</div>
+                    <div class="col-xs-3">
+                        <input type="text" class="form-control" id="tail" name="tail" placeholder="활용 어미" value="{{ .pos.Tail }}">
+                    </div>
+                </div>
+
+                <p class="text-muted">(예: 깨달아 ⇐ 깨닫다 + 아, &nbsp; 파란 ⇐ 파랗다 + ㄴ)</p>
+            </div>
+        </div>
+
+        <div class="box-footer">
+			{{ if .pos.Id != "" }}
+            <button type="submit" class="btn btn-success">수정</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dlgConfirm">삭제</button>
+            <button type="button" class="btn btn-primary pull-right" onclick="onAddNew()">신규 등록</button>
+            {{else}}
+            <button type="submit" class="btn btn-primary">추가</button>
+            {{end}}
+        </div>
+    </form>
+</div>
+
+<div class="modal fade modal-danger" id="dlgConfirm" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">정말 삭제하시겠습니까?</h4>
+            </div>
+            <div class="modal-body">
+                <p>{{ .pos.Word }}: "{{ .pos.Root }} + {{ .pos.Tail }}"</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-outline" onclick="onDelete()">삭제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{block localJS()}}
+<script>
+function sbmChk()
+{
+    var f1 = document.forms["f1"];
+
+    if (f1.word.value.trim() == "") {
+        alert("어절을 입력해주세요.");
+        return false;
+    }
+
+    if (!f1.root.value.endsWith('다')) {
+        alert("용언 원형은 '~다'로 끝나야 합니다.");
+        return false;
+    }
+
+    return true;
+}
+
+function onDelete()
+{
+    document.forms["f1"].cmd.value = "del";
+    document.forms["f1"].submit();
+}
+
+function onAddNew()
+{
+    if (!sbmChk())
+        return;
+
+    document.forms["f1"].cmd.value = "new";
+    document.forms["f1"].submit();
+}
+
+$(function () {
+	hideWaitIndi();
+});
+</script>
+{{end}}

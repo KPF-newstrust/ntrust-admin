@@ -1,0 +1,192 @@
+{{extends "layout_admin.html"}}
+{{block title()}}사용자 정보{{end}}
+{{block localCSS()}}
+<style>
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>사용자 정보</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+	<div class="box-header with-border">
+		<h3 class="box-title">로그인 정보</h3>
+	</div>
+	<form class="form-horizontal" id="fomPW" method="POST" action="chgPW">
+		<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+		<input type="hidden" name="id" value="{{ .item.Id.Hex() }}"/>
+		<div class="box-body">
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label">계정 생성 시각</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" value="{{ .item.CreatedAt|formatTillSecKor }}" readonly>					
+				</div>
+			</div>
+				
+			<div class="form-group">
+				<label class="col-sm-3 control-label">로그인 아이디</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" value="{{ .item.LoginId }}" readonly>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="inputPw" class="col-sm-3 control-label">비밀번호 변경</label>
+				<div class="col-sm-6">
+					<input type="password" class="form-control" id="inputPw" name="passwd" placeholder="새 비밀번호">
+				</div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-danger btn-block" onclick="onChangePW()">변경</button>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label">최근 로그인 시간</label>
+				<div class="col-sm-9">
+					<input type="text" class="form-control" value="{{ .item.LastLoginAt|formatTillSecKor }}" readonly>					
+				</div>
+			</div>
+
+		</div>
+	</form>
+</div>
+
+<div class="box box-info">
+	<div class="box-header with-border">
+		<h3 class="box-title">기본 정보</h3>
+	</div>
+	<form class="form-horizontal" id="fomInfo" method="POST" action="chgInfo">
+		<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+		<input type="hidden" name="id" value="{{ .item.Id.Hex() }}"/>
+		<div class="box-body">
+				
+			<div class="form-group">
+				<label for="inputName" class="col-sm-3 control-label">이름</label>
+				<div class="col-sm-9">
+					<input type="text" name="name" id="inputName" class="form-control" value="{{ .item.Name }}">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="inputEmail" class="col-sm-3 control-label">이메일</label>
+				<div class="col-sm-9">
+					<input type="email" name="email" id="inputEmail" class="form-control" value="{{ .item.Email }}">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="inputPhone" class="col-sm-3 control-label">전화번호</label>
+				<div class="col-sm-9">
+					<input type="tel" name="phone" class="form-control" id="inputPhone" value="{{ .item.Phone }}">
+				</div>
+			</div>
+
+		</div>
+
+		<div class="box-footer">
+			<button type="button" class="btn btn-danger pull-right" onclick="onChangeInfo()">수정</button>
+		</div>
+	</form>
+</div>
+
+<div class="box box-warning">
+	<div class="box-header with-border">
+		<h3 class="box-title">권한 정보</h3>
+	</div>
+	<form class="form-horizontal" id="fomPerm" method="POST" action="chgPerm">
+		<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+		<input type="hidden" name="id" value="{{ .item.Id.Hex() }}"/>
+		<div class="box-body">
+
+			<div class="form-group">
+				<label for="inputName" class="col-sm-3 control-label">레벨</label>
+				<div class="col-sm-9">
+					<div class="radio">
+						<label>
+                      		<input type="radio" name="level" value="0">
+                      		접속 불가
+                    	</label>
+					</div>
+					<div class="radio">
+						<label>
+                      		<input type="radio" name="level" value="1">
+                      		읽기만 가능
+                    	</label>
+					</div>
+					<div class="radio">
+						<label>
+                      		<input type="radio" name="level" value="5">
+                      		입력 및 수정 가능
+                    	</label>
+					</div>
+					<div class="radio">
+						<label>
+                      		<input type="radio" name="level" value="9">
+                      		최고 관리자
+                    	</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label">작업권한 카테고리</label>
+				<div class="col-sm-9">
+                  	<div class="checkbox">
+                    	<label><input type="checkbox">기사 관리</label> &nbsp;
+                    	<label><input type="checkbox">사전 관리</label> &nbsp;
+                    	<label><input type="checkbox">전체</label>
+                  	</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="box-footer">
+			<button type="button" class="btn btn-danger pull-right" onclick="onChangePerm()">수정</button>
+		</div>
+	</form>
+</div>
+{{end}}
+
+{{block localJS()}}
+<script>
+function onChangePW()
+{
+	var pw = $("#inputPw").val();
+	if (pw == "")
+	{
+		alert("비밀번호를 입력해주세요.");
+		return;
+	}
+
+	if (confirm("비밀번호를 변경하시겠습니까?"))
+	{
+		showWaitIndi();
+		$("#fomPW").submit();
+	}
+}
+
+function onChangeInfo()
+{
+	if (confirm("기본 정보를 변경하시겠습니까?"))
+	{
+		showWaitIndi();
+		$("#fomInfo").submit();
+	}
+}
+
+function onChangePerm()
+{
+	if (confirm("권한 정보를 변경하시겠습니까?"))
+	{
+		showWaitIndi();
+		$("#fomPerm").submit();
+	}
+}
+
+$(window).load(function(){ hideWaitIndi(); });
+</script>
+{{end}}

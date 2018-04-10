@@ -1,0 +1,235 @@
+{{extends "layout_open.html"}}
+{{block title()}}클러스터{{end}}
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/css/bootstrap-slider.min.css">
+<style>
+#slibox label {
+    text-align: right;
+}
+.slider {
+    width: 100% !important;
+}
+#items span.media {
+	color: #888;
+	font-size: 0.9em;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>클러스터
+<button type="button" class="btn btn-primary pull-right" onclick="location.href='/c'">목록</button>
+</h1>
+{{end}}
+
+{{block body()}}
+
+<div class="panel box">
+	<div class="box-header with-border">
+		<h4 class="box-title">요인별 가중치 적용</h4>
+		<div class="box-tools pull-right">
+			<!-- Collapse Button -->
+			<button type="button" class="btn btn-box-tool" data-widget="collapse">
+				<i class="fa fa-minus"></i>
+			</button>
+		</div>
+	</div>
+	<div id="slibox" class="box-body" aria-expanded="true">
+		<form action="" method="POST" onsubmit="showWaitIndi(); return true">
+			<input type="hidden" name="_csrf" value="{{ ._csrf }}"/>
+			<input type="hidden" name="page" value="0"/>
+		<div class="box-body">
+			<div class="row">
+				<label class="col-sm-1">독이성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="read"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .read }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+
+				<label class="col-sm-1">투명성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="clear"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .clear }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+
+				<label class="col-sm-1">사실성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="truth"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .truth }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="col-sm-1">유용성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="useful"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .useful }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+
+				<label class="col-sm-1">균형성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="balance"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .balance }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+
+				<label class="col-sm-1">다양성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="variety"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .variety }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="col-sm-1">독창성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="original"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .original }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+
+				<label class="col-sm-1">중요성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="important"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .important }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+
+				<label class="col-sm-1">심층성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="deep"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .deep }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+			</div>
+
+			<div class="row">
+				<label class="col-sm-1">선정성:</label>
+				<div class="col-sm-3">
+					<input type="text" class="slider" name="yellow"
+						data-slider-min="0" data-slider-max="4" 
+						data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+						data-slider-step="1" data-slider-value="{{ .yellow }}" data-slider-orientation="horizontal"
+						data-slider-selection="before" data-slider-tooltip="hide">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-sm-10"></div>
+				<div class="col-sm-2">
+					<button class="btn btn-primary btn-block" type="submit">가중치 적용하기</button>
+				</div>
+			</div>
+		</div>
+		</form>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-10 col-xs-offset-1">
+		<div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">뉴스 목록</h3>
+            </div>
+			<div class="box-body table-responsive no-padding">
+				<table class="table table-hover">
+					<tbody><tr>
+						<th width="60px"></th>
+						<th>제목</th>
+						<th width="90px">언론사</th>
+						<th width="120px">가중치 적용점수</th>
+						<th width="90px">유사도</th>
+					</tr>
+					<tr>
+						<td><span class="label label-info pull-right">대표 기사</span></td>
+						<td><a data-toggle="modal" data-target='#{{ split(.dele.NewsId,".")[1] }}' style="cursor:pointer">{{.dele.Title}}</a></td>
+						<td>{{.dele.Media}}</td>
+						<td>{{.dele.Score|toFixed:2}}점</td>
+						<td></td>
+					</tr>
+					{{ range item := .items }}
+					<tr>
+						<td></td>
+						<td><a data-toggle="modal" data-target='#{{ split(item.NewsId,".")[1] }}' style="cursor:pointer">{{item.Title}}</a></td>
+						<td>{{item.Media}}</td>
+						<td>{{item.Score|toFixed:2}}점</td>
+						<td>{{item.Similarity|toFixed:5}}</td>
+					</tr>
+					{{ end }}
+					</tbody></table>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+</div>
+<!-- Modal -->
+<div class="modal" id='{{ split(.dele.NewsId,".")[1]}}' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">{{.dele.Title}}</h4>
+			</div>
+			<div class="modal-body">
+				{{.dele.Content|linebreaksCRBR|raw}}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+{{ range item := .items }}
+<div class="modal" id='{{ split(item.NewsId,".")[1]}}' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">{{item.Title}}</h4>
+			</div>
+			<div class="modal-body">
+				{{item.Content|linebreaksCRBR|raw}}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
+<!-- /Modal-->
+
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/bootstrap-slider.min.js"></script>
+<script>
+$(window).load(function()
+{
+	$('input.slider').slider();
+	hideWaitIndi();
+});
+</script>
+{{end}}

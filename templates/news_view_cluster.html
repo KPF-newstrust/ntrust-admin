@@ -1,0 +1,31 @@
+<p>{{ if .item.ClusterDelegate }}
+이 기사는 클러스터의 대표 기사입니다. 클러스터를 이루는 기사들은 다음과 같습니다.
+{{ else if len(.item.ClusterId) > 0 }}
+이 기사가 속한 클러스터의 대표기사는 [<a href="view?nws={{ .dele.NewsId }}">{{ .dele.Title }}</a>] 입니다.
+{{ else }}
+이 기사는 [<a href="view?nws={{ .dele.NewsId }}">{{ .dele.Title }}</a>] 의 중복 기사입니다.
+{{ end }}</p>
+<table class="matrix">
+	<tr>
+		<th>기사 제목</th>
+		<th>유사도</th>
+	</tr>
+	{{ range cluster := .clusters }}
+	<tr>
+		<td>
+			{{ if cluster.NewsId == .thisNewsId }}
+			<b>{{ cluster.Title }}</b>
+			{{ else }}
+			<a href="view?nws={{ cluster.NewsId }}">{{ cluster.Title }}</a>
+			{{ end }}
+		</td>
+		<td>
+			{{ if cluster.ClusterSimilarity == 0 }}
+			중복기사
+			{{ else }}
+			{{ cluster.ClusterSimilarity }}
+			{{ end }}
+		</td>
+	</tr>
+	{{ end }}
+</table>

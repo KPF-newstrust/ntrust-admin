@@ -1,0 +1,217 @@
+
+.arrow_box b {
+	padding: 0px 3px;
+	border-radius: 3px;
+}
+.arrow_box {
+	position: absolute;
+	border: 2px solid #000000;
+	background-color: #fff;
+	border-radius: 4px;
+	padding: 1px 5px;
+	display: none;
+	z-index: 1000;
+}
+.arrow_box:after, .arrow_box:before {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+.arrow_box:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-top-color: #ffffff;
+	border-width: 5px;
+	margin-left: -5px;
+}
+.arrow_box:before {
+	border-color: rgba(0, 0, 0, 0);
+	border-top-color: #000000;
+	border-width: 8px;
+	margin-left: -8px;
+}
+
+.tag_NNG,.tag_Noun,.tag_N {
+	fill: rgba(254, 0, 0, 0.35);
+	background-color: rgba(254, 0, 0, 0.35);
+}
+.tag_NNP {
+	fill: rgba(253, 67, 67, 0.35);
+	background-color: rgba(253, 67, 67, 0.35);
+}
+.tag_NNB,.tag_Suffix {
+	fill: rgba(255, 129, 129, 0.35);
+	background-color: rgba(255, 129, 129, 0.35);
+}
+.tag_NNBC,.tag_NNM {
+	fill: rgba(255, 190, 190, 0.35);
+	background-color: rgba(255, 190, 190, 0.35);
+}
+.tag_NR {
+	fill: rgba(255, 95, 0, 0.35);
+	background-color: rgba(255, 95, 0, 0.35);
+}
+.tag_NP {
+	fill: rgba(253, 117, 36, 0.35);
+	background-color: rgba(253, 117, 36, 0.35);
+}
+.tag_VV,.tag_Verb,.tag_P {
+	fill: rgba(251, 141, 75, 0.35);
+	background-color: rgba(251, 141, 75, 0.35);
+}
+.tag_VA,.tag_Adjective {
+	fill: rgba(249, 162, 109, 0.35);
+	background-color: rgba(249, 162, 109, 0.35);
+}
+.tag_VX,.tag_VXV,.tag_VXA {
+	fill: rgba(253, 189, 149, 0.35);
+	background-color: rgba(253, 189, 149, 0.35);
+}
+.tag_VCP {
+	fill: rgba(255, 200, 0, 0.35);
+	background-color: rgba(255, 200, 0, 0.35);
+}
+.tag_VCN {
+	fill: rgba(255, 209, 44, 0.35);
+	background-color: rgba(255, 209, 44, 0.35);
+}
+.tag_MM,.tag_MDT,.tag_MDN,.tag_Determiner {
+	fill: rgba(255, 219, 95, 0.35);
+	background-color: rgba(255, 219, 95, 0.35);
+}
+.tag_MAG,.tag_Adverb {
+	fill: rgba(253, 229, 145, 0.35);
+	background-color: rgba(253, 229, 145, 0.35);
+}
+.tag_MAJ,.tag_MAC {
+	fill: rgba(194, 255, 0, 0.35);
+	background-color: rgba(194, 255, 0, 0.35);
+}
+.tag_IC {
+	fill: rgba(205, 255, 46, 0.35);
+	background-color: rgba(205, 255, 46, 0.35);
+}
+.tag_JKS,.tag_Josa,.tag_J {
+	fill: rgba(217, 254, 97, 0.35);
+	background-color: rgba(217, 254, 97, 0.35);
+}
+.tag_JKC {
+	fill: rgba(230, 253, 155, 0.35);
+	background-color: rgba(230, 253, 155, 0.35);
+}
+.tag_JKG {
+	fill: rgba(58, 255, 0, 0.35);
+	background-color: rgba(58, 255, 0, 0.35);
+}
+.tag_JKO {
+	fill: rgba(100, 253, 54, 0.35);
+	background-color: rgba(100, 253, 54, 0.35);
+}
+.tag_JKB,.tag_JKM {
+	fill: rgba(145, 255, 112, 0.35);
+	background-color: rgba(145, 255, 112, 0.35);
+}
+.tag_JKV,.tag_JKI {
+	fill: rgba(0, 255, 121, 0.35);
+	background-color: rgba(0, 255, 121, 0.35);
+}
+.tag_JKQ {
+	fill: rgba(71, 255, 158, 0.35);
+	background-color: rgba(71, 255, 158, 0.35);
+}
+.tag_JX {
+	fill: rgba(119, 255, 183, 0.35);
+	background-color: rgba(119, 255, 183, 0.35);
+}
+.tag_JC,.tag_Conjunction,.tag_M {
+	fill: rgba(175, 255, 212, 0.35);
+	background-color: rgba(175, 255, 212, 0.35);
+}
+.tag_EP,.tag_EPH,.tag_EPT,.tag_EPP,.tag_Eomi,.tag_PreEomi,.tag_E {
+	fill: rgba(0, 252, 255, 0.35);
+	background-color: rgba(0, 252, 255, 0.35);
+}
+.tag_EF,.tag_EFN,.tag_EFQ,.tag_EFO,.tag_EFA,.tag_EFI,.tag_EFR {
+	fill: rgba(55, 249, 251, 0.35);
+	background-color: rgba(55, 249, 251, 0.35);
+}
+.tag_EC,.tag_ECE,.tag_ECD,.tag_ECS,.tag_ETD {
+	fill: rgba(108, 253, 255, 0.35);
+	background-color: rgba(108, 253, 255, 0.35);
+}
+.tag_ETN {
+	fill: rgba(162, 253, 255, 0.35);
+	background-color: rgba(162, 253, 255, 0.35);
+}
+.tag_ETM {
+	fill: rgba(138, 184, 185, 0.35);
+	background-color: rgba(138, 184, 185, 0.35);
+}
+.tag_XPN,.tag_XPV,.tag_X {
+	fill: rgba(0, 176, 255, 0.35);
+	background-color: rgba(0, 176, 255, 0.35);
+}
+.tag_XSN {
+	fill: rgba(30, 156, 213, 0.35);
+	background-color: rgba(30, 156, 213, 0.35);
+}
+.tag_XSV {
+	fill: rgba(42, 124, 161, 0.35);
+	background-color: rgba(42, 124, 161, 0.35);
+}
+.tag_XSA {
+	fill: rgba(39, 90, 112, 0.35);
+	background-color: rgba(39, 90, 112, 0.35);
+}
+.tag_XR {
+	fill: rgba(177, 231, 255, 0.35);
+	background-color: rgba(177, 231, 255, 0.35);
+}
+.tag_SF {
+	fill: rgba(0, 41, 255, 0.35);
+	background-color: rgba(0, 41, 255, 0.35);
+}
+.tag_SE {
+	fill: rgba(37, 72, 251, 0.35);
+	background-color: rgba(37, 72, 251, 0.35);
+}
+.tag_SSO,.tag_SS {
+	fill: rgba(94, 119, 246, 0.35);
+	background-color: rgba(94, 119, 246, 0.35);
+}
+.tag_SSC {
+	fill: rgba(211, 0, 255, 0.35);
+	background-color: rgba(211, 0, 255, 0.35);
+}
+.tag_SC,.tag_SP,.tag_SO,.tag_SW,.tag_Punctuation,.tag_S {
+	fill: rgba(220, 56, 255, 0.35);
+	background-color: rgba(220, 56, 255, 0.35);
+}
+.tag_SY {
+	fill: rgba(229, 110, 255, 0.35);
+	background-color: rgba(229, 110, 255, 0.35);
+}
+.tag_SL,.tag_OL,.tag_OH,.tag_Alpha,.tag_Foreign,.tag_Email,.tag_F {
+	fill: rgba(237, 164, 253, 0.35);
+	background-color: rgba(237, 164, 253, 0.35);
+}
+.tag_SH {
+	fill: rgba(255, 0, 164, 0.35);
+	background-color: rgba(255, 0, 164, 0.35);
+}
+.tag_SN,.tag_ON,.tag_Number {
+	fill: rgba(216, 57, 159, 0.35);
+	background-color: rgba(216, 57, 159, 0.35);
+}
+.tag_UNKNOWN,.tag_UN {
+	fill: rgba(32, 32, 32, 0.35);
+	background-color: rgba(32, 32, 32, 0.35);
+}
+.tag_SS_ {
+	fill: rgba(94, 93, 0, 0.35);
+	background-color: rgba(94, 93, 0, 0.35);
+}

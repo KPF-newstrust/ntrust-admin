@@ -1,0 +1,317 @@
+{{extends "layout_admin.html"}}
+{{block title()}}기사 평가 목록{{end}}
+{{block localCSS()}}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/css/bootstrap-slider.min.css">
+<style>
+tfoot input {
+	width: 100%;
+	padding: 3px;
+	box-sizing: border-box;
+}
+tfoot {
+    display: table-header-group;
+}
+.dataTables_filter {
+    display: none; 
+}
+#slibox label {
+    text-align: right;
+}
+.slider {
+    width: 100% !important;
+}
+</style>
+{{end}}
+
+{{block chead()}}
+<h1>기사 평가 목록</h1>
+{{end}}
+
+{{block body()}}
+<div class="box box-primary">
+    <div class="box-body">
+
+        <div class="panel box box-danger">
+            <div class="box-header with-border">
+                <h4 class="box-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#slibox" aria-expanded="true" class="">요인별 가중치 적용</a>
+                </h4>
+            </div>
+            <div id="slibox" class="panel-collapse collapse in" aria-expanded="true" style="">
+                <div class="box-body">
+                    <div class="row">
+                        <label class="col-sm-1">독이성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="read"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+
+                        <label class="col-sm-1">투명성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="clear"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+
+                        <label class="col-sm-1">사실성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="truth"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-sm-1">유용성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="useful"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+
+                        <label class="col-sm-1">균형성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="balance"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+
+                        <label class="col-sm-1">다양성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="variety"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-sm-1">독창성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="original"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+
+                        <label class="col-sm-1">중요성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="important"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+
+                        <label class="col-sm-1">심층성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="deep"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-sm-1">선정성:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="slider" data-slider-id="yellow"
+                                data-slider-min="0" data-slider-max="4" 
+                                data-slider-ticks="[0,1,2,3,4]" data-slider-ticks-labels='["0","1","2","3","4"]'
+                                data-slider-step="1" data-slider-value="1" data-slider-orientation="horizontal"
+                                data-slider-selection="before" data-slider-tooltip="hide">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-9 checkbox">
+                            <label class="pull-right"><input type="checkbox" id="applyWeight" onclick="toggleWeight()"> 가중치 적용하기</label>
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-danger btn-block disabled" id="btnApplyWeight" onclick="sortByWeight()">가중치 적용하여 정렬하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        <table id="jqdt1" class="table table-bordered table-striped table-hover" width="100%">
+            <thead>
+                <tr>
+				  	<th>시간</th>
+					<th>카테고리</th>
+					<th>클러스터</th>
+					<th>제목</th>
+                    <th>종합평가(신뢰도) 점수 평균</th>
+                    <th>계량평가 요인별 점수 합</th>
+                    <th>알고리즘 점수 합계</th>
+					<th>저널리즘 가치별 점수 합계</th>
+                </tr>
+			</thead>
+			<tfoot>
+				<tr>
+                    <th></th>
+					<th><select data-column="1">
+                        <option></option>
+						<option>경제</option>
+						<option>국제</option>
+						<option>정치</option>
+						<option>연예</option>
+						<option>스포츠</option>
+						<option>사회</option>
+					</select></th>
+					<th><select data-column="2">
+                        <option></option>
+						<option>클러스터 1</option>
+						<option>클러스터 2</option>
+						<option>클러스터 3</option>
+						<option>랜덤추출</option>
+					</select></th>
+                    <th><input type="text" class="txt" placeholder="제목 필터" data-column="3"></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+				</tr>
+			</tfoot>
+        </table>
+    </div>
+</div>
+{{end}}
+
+{{block localJS()}}
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.9.0/bootstrap-slider.min.js"></script>
+<script>
+var jqdt;
+var sliders;
+var sliWeights = {};
+
+function updateWeights()
+{
+    sliWeights["apply"] = $("#applyWeight").is(":checked") ? 1:0;
+    sliders.each(function(idx,sli) {        
+        var sid = sli.data("slider-id");
+        var v = sli.slider("getValue");
+        sliWeights[sid] = v;
+    });
+}
+
+$(function () {
+    $("#applyWeight").prop("checked", false);
+    sliders = $('input.slider').slider();
+    updateWeights();
+
+    jqdt = $("#jqdt1").DataTable({
+        "lengthMenu": [10, 20, 30, 50],
+        "order": [[ 0, 'desc' ]],
+        language: {
+            "infoEmpty": "검색 결과가 없습니다.",
+            "emptyTable": "테이블에 표시할 내용이 없습니다.",
+            "info": "_TOTAL_ 개의 항목 중 _START_ ~ _END_",
+            "infoFiltered": " (전체 _MAX_ 개)",
+            "lengthMenu": "페이지 당 _MENU_ 항목 표시",
+			"search": "NewsID 검색:",
+            paginate: {
+                first:    '«',
+                previous: '‹',
+                next:     '›',
+                last:     '»'
+            },
+            aria: {
+                paginate: {
+                    first:    'First',
+                    previous: 'Previous',
+                    next:     'Next',
+                    last:     'Last'
+                }
+            }
+        },
+        serverSide: true,
+        ajax: {
+            url: '/admin/assess/list.json',
+            type: 'POST',
+            data: function (d) {
+				d._csrf = "{{ ._csrf }}";
+                d.weight = sliWeights;
+            }
+        },
+        columns: [
+            { "data": "insertDt", "searchable":false, "width":"120px" },
+			{ "data": "category" },
+			{ "data": "cluster" },
+            { "data": "title",
+                "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                    $(nTd).html('<a href="/admin/assess/view?nws='+oData.newsId+'">'+escapeHtml(sData)+'</a>');
+                }
+            },
+			{ "data": "avg" },
+            { "data": "sco" },
+            { "data": "vsc" },
+			{ "data": "jsc" }
+        ]
+	})
+	.on('preXhr.dt', function(e, settings, data) {
+		showWaitIndi();
+	})
+	.on('xhr.dt', function(e, settings, data) {
+		hideWaitIndi();
+	});
+
+	jqdt.columns().every(function () {
+        var that = this;
+ 
+        $('input.txt', this.footer()).on('keyup change', function() {
+            if (that.search() !== this.value) {
+                that.search(this.value).draw();
+            }
+        });
+
+        $('select', this.footer()).on('change', function() {
+            if (that.search() !== this.value) {
+                that.search(this.value).draw();
+            }
+        });
+	});    
+});
+
+function toggleWeight()
+{
+    if ($("#applyWeight").is(":checked"))
+    {
+        // apply
+        $("#btnApplyWeight").removeClass("disabled");        
+    }
+    else
+    {
+        $("#btnApplyWeight").addClass("disabled");
+    }
+}
+
+function sortByWeight()
+{
+    if (!$("#applyWeight").is(":checked"))
+        return;
+
+    updateWeights();    
+    jqdt.ajax.reload();
+}
+
+</script>
+{{end}}

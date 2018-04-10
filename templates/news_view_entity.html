@@ -1,0 +1,336 @@
+<table class="matrix">
+	<tr>
+		<th>개체명 - 인물</th>
+		<td>{{ .item.NerPersons|join:", " }}</td>
+	</tr>
+	<tr>
+		<th>개체명 - 기관</th>
+		<td>{{ .item.NerOrganizations|join:", " }}</td>
+	</tr>
+	<tr>
+		<th>개체명 - 지역</th>
+		<td>{{ .item.NerLocations|join:", " }}</td>
+	</tr>
+</table>
+<br>
+	
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#tab_Mecab" data-toggle="tab" aria-expanded="true">MeCab</a></li>
+	<li class=""><a href="#tab_Hannanum" data-toggle="tab" aria-expanded="false">Hannanum</a></li>
+	<li class=""><a href="#tab_Kkma" data-toggle="tab" aria-expanded="false">Kkma</a></li>
+	<li class=""><a href="#tab_Twitter" data-toggle="tab" aria-expanded="false">Twitter</a></li>
+	<li class=""><a href="#tab_Bigk" data-toggle="tab" aria-expanded="false">빅카인즈</a></li>
+	{{ if len(.annot.NewsId) > 0 }}
+	<li class=""><a href="#tab_Human" data-toggle="tab" aria-expanded="false">수동 정답</a></li>
+	{{ end }}
+</ul>
+<div class="tab-content">
+	<div class="tab-pane active" id="tab_Mecab">
+		<table class="matrix">
+<!--			
+			<tr>
+				<th>개체명 - 인물</th>
+				<td>{{ range et := .entity.MecabPersons }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 기관</th>
+				<td>{{ range et := .entity.MecabOrganizations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 지역</th>
+				<td>{{ range et := .entity.MecabLocations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 정책</th>
+				<td>{{ range et := .entity.MecabPlans }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 상품</th>
+				<td>{{ range et := .entity.MecabProducts }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 사건</th>
+				<td>{{ range et := .entity.MecabEvents }} {{et}}, {{ end }}</td>
+			</tr>
+-->			
+			<tr>
+				<!--<th>형태소 분석</th>-->
+				<td><svg class="mecab"></svg></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="tab-pane" id="tab_Hannanum">
+		<table class="matrix">
+<!--
+			<tr>
+				<th>개체명 - 인물</th>
+				<td>{{ range et := .entity.HannanumPersons }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 기관</th>
+				<td>{{ range et := .entity.HannanumOrganizations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 지역</th>
+				<td>{{ range et := .entity.HannanumLocations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 정책</th>
+				<td>{{ range et := .entity.HannanumPlans }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 상품</th>
+				<td>{{ range et := .entity.HannanumProducts }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 사건</th>
+				<td>{{ range et := .entity.HannanumEvents }} {{et}}, {{ end }}</td>
+			</tr>
+-->			
+			<tr>
+				<!--<th>형태소 분석</th>-->
+				<td><svg class="hannn"></svg></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="tab-pane" id="tab_Kkma">
+		<table class="matrix">
+<!--
+			<tr>
+				<th>개체명 - 인물</th>
+				<td>{{ range et := .entity.KkmaPersons }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 기관</th>
+				<td>{{ range et := .entity.KkmaOrganizations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 지역</th>
+				<td>{{ range et := .entity.KkmaLocations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 정책</th>
+				<td>{{ range et := .entity.KkmaPlans }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 상품</th>
+				<td>{{ range et := .entity.KkmaProducts }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 사건</th>
+				<td>{{ range et := .entity.KkmaEvents }} {{et}}, {{ end }}</td>
+			</tr>
+-->			
+			<tr>
+				<!--<th>형태소 분석</th>-->
+				<td><svg class="kkma"></svg></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="tab-pane" id="tab_Twitter">
+		<table class="matrix">
+<!--			
+			<tr>
+				<th>개체명 - 인물</th>
+				<td>{{ range et := .entity.TwitterPersons }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 기관</th>
+				<td>{{ range et := .entity.TwitterOrganizations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 지역</th>
+				<td>{{ range et := .entity.TwitterLocations }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 정책</th>
+				<td>{{ range et := .entity.TwitterPlans }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 상품</th>
+				<td>{{ range et := .entity.TwitterProducts }} {{et}}, {{ end }}</td>
+			</tr>
+			<tr>
+				<th>개체명 - 사건</th>
+				<td>{{ range et := .entity.TwitterEvents }} {{et}}, {{ end }}</td>
+			</tr>
+-->			
+			<tr>
+				<!--<th>형태소 분석</th>-->
+				<td><svg class="twitter"></svg></td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="tab-pane" id="tab_Bigk">
+		<table class="matrix">
+			<tr>
+				<th>TMS_NE_PERSON</th>
+				<td>{{ .year1.TmsNePerson }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_ORGANIZATION</th>
+				<td>{{ .year1.TmsNeOrganization }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_LOCATION</th>
+				<td>{{ .year1.TmsNeLocation }}</td>
+			</tr>
+			<tr>
+				<th>TMS_NE_STREAM</th>
+				<td>{{ .year1.TmsNeStream }}</td>
+			</tr>
+			<tr>
+				<th>TMS_RAW_STREAM</th>
+				<td>{{ .year1.TmsRawStream }}</td>
+			</tr>
+			<tr>
+				<th>TMS_SIMILARITY</th>
+				<td>{{ .year1.TmsSimilarity }}</td>
+			</tr>
+		</table>
+	</div>
+	{{ if len(.annot.NewsId) > 0 }}
+	<div class="tab-pane" id="tab_Human">
+		<table class="matrix">
+			<tr>
+				<th>실명정보원</th>
+				<td>
+					<ul>{{ range wp := .annot.RealInfo }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>실명직접인용</th>
+				<td>
+					<ul>{{ range wp := .annot.RealQuote }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>실명간접인용</th>
+				<td>
+					<ul>{{ range wp := .annot.RealIndir }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<ul>익명정보원</th>
+				<td>{{ range wp := .annot.AnonInfo }}
+					<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+					{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>익명직접인용</th>
+				<td>
+					<ul>{{ range wp := .annot.AnonQuote }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>익명간접인용</th>
+				<td>
+					<ul>{{ range wp := .annot.AnonIndir }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>인물(직책포함)</th>
+				<td>
+					<ul>{{ range wp := .annot.ManJob }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>공적인물</th>
+				<td>
+					<ul>{{ range wp := .annot.ManPub }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>실명/익명 기자명</th>
+				<td>
+					<ul>{{ range wp := .annot.ManNews }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>기관</th>
+				<td>
+					<ul>{{ range wp := .annot.Institute }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>장소</th>
+				<td>
+					<ul>{{ range wp := .annot.Place }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>수치 인용</th>
+				<td>
+					<ul>{{ range wp := .annot.Number }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+			<tr>
+				<th>혐오표현/비속어/선정적단어</th>
+				<td>
+					<ul>{{ range wp := .annot.Disgust }}
+						<li>{{wp.Text}}{{ if wp.Meta != "" }} ({{wp.Meta}}){{ end }}</li>
+						{{ end }}</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+	{{ end }}
+</div>
+
+<script src="/public/js/tagvis.js"></script>
+<script>
+
+mecabTags=[{{ cnt = 0 }}
+{{ range wp := .entity.MecabTags }}{{ if cnt == 0 }}[{{end}}["{{wp.Word|safeJs}}","{{wp.Pos}}"]{{ if wp.Pos == "SF" }}],
+{{ cnt = 0 }}{{ else }}{{ cnt = cnt + 1 }},{{ end }}{{ end }}{{ if cnt > 0 }}]{{end}}];
+
+hannnTags=[{{ cnt = 0 }}
+{{ range wp := .entity.HannanumTags }}{{ if cnt == 0 }}[{{end}}["{{wp.Word|safeJs}}","{{wp.Pos}}"]{{ if wp.Pos == "SF" }}],
+{{ cnt = 0 }}{{ else }}{{ cnt = cnt + 1 }},{{ end }}{{ end }}{{ if cnt > 0 }}]{{end}}];
+
+kkmaTags=[{{ cnt = 0 }}
+{{ range wp := .entity.KkmaTags }}{{ if cnt == 0 }}[{{end}}["{{wp.Word|safeJs}}","{{wp.Pos}}"]{{ if wp.Pos == "SF" }}],
+{{ cnt = 0 }}{{ else }}{{ cnt = cnt + 1 }},{{ end }}{{ end }}{{ if cnt > 0 }}]{{end}}];
+
+twitTags=[{{ cnt = 0 }}
+{{ range wp := .entity.TwitterTags }}{{ if cnt == 0 }}[{{end}}["{{wp.Word|safeJs}}","{{wp.Pos}}"]{{ if wp.Pos == "Punctuation" && wp.Word == "." }}],
+{{ cnt = 0 }}{{ else }}{{ cnt = cnt + 1 }},{{ end }}{{ end }}{{ if cnt > 0 }}]{{end}}];
+
+
+function visTags()
+{
+	VisualizePostag("svg.mecab", mecabTags);
+	VisualizePostag("svg.kkma", kkmaTags);
+	VisualizePostag("svg.hannn", hannnTags);
+	VisualizePostag("svg.twitter", twitTags);	
+}
+
+</script>
