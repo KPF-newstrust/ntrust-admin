@@ -1,0 +1,39 @@
+version: "2"
+services:
+  app:
+    build: .
+    image: nt-app
+    container_name: nt-app
+    command: go run main.go
+    restart: always
+    ports:
+      - "50000:8090"
+    links:
+      - mq
+      - mongo
+      - redis  
+  mq:
+    image: rabbitmq
+    container_name: nt-mq
+    restart: always
+    ports:
+      - "50001:5672"
+      - "50002:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=ntrust
+      - RABBITMQ_DEFAULT_PASS=solif
+      - RABBITMQ_DEFAULT_VHOST=ntrust
+  mongo:
+    image: mongo
+    container_name: nt-mongo
+    restart: always
+    volumes: 
+      - ./data:/data/db
+    ports:
+      - "50003:27017"
+  redis:
+    image: redis
+    container_name: nt-redis
+    restart: always
+    ports:
+      - "50004:6379"

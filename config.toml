@@ -18,6 +18,6 @@ gateway_port = 8090
 serve_static = true
 use_ssl = true
 
-dsn_mongo = "mongodb://localhost:27017/ntrust2"
-dsn_redis = "redis://localhost:6379?ConnectTimeout=5000&IdleTimeOutSecs=180"
-dsn_amqp = "amqp://username:password@localhost:35672/ntrust"
+dsn_mongo = "mongodb://nt-mongo:27017/ntrust2"
+dsn_redis = "redis://nt-redis:6379?ConnectTimeout=5000&IdleTimeOutSecs=180"
+dsn_amqp = "amqp://ntrust:solif@nt-mq:5672/ntrust"
