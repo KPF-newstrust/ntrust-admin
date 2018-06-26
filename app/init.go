@@ -40,9 +40,9 @@ const (
 
 	COLLNAME_USER = "user"
 	COLLNAME_NEWS = "news"
-	COLLNAME_ASSTATS = "asStats"
+	COLLNAME_NEWS_SRC = "news_src"
 	COLLNAME_NEWS_ENTITY = "news_entity"
-	COLLNAME_SRCNEWS = "cm2016"
+	COLLNAME_ASSTATS = "asStats"
 	COLLNAME_ANNOTATE = "annotate"
 	COLLNAME_BUGREPORT = "bugs"
 	COLLNAME_POSDIC = "posdic"
@@ -136,7 +136,7 @@ func _ensureSingleColumnUniqueIndex(collname string, fieldName string) {
 
 func ensureMongoIndices() {
 
-	coll := mgoDB.With(mgoSession).C(COLLNAME_SRCNEWS)
+	coll := mgoDB.With(mgoSession).C(COLLNAME_NEWS_SRC)
 	err := coll.EnsureIndex(mgo.Index{
 		Key: []string{"insert_dt"},
 		Unique: false,

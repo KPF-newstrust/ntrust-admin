@@ -93,7 +93,7 @@ func jsonNsrcList(_ctx echo.Context) error {
 	
 	sessionCopy := mgoSession.Copy()
 	defer sessionCopy.Close()
-	coll := mgoDB.With(sessionCopy).C(COLLNAME_SRCNEWS)
+	coll := mgoDB.With(sessionCopy).C(COLLNAME_NEWS_SRC)
 
 	json.Total, err = coll.Count()
 	if err != nil {
@@ -173,7 +173,7 @@ func showNsrcDetail(_ctx echo.Context) error {
 
 	sessionCopy := mgoSession.Copy()
 	defer sessionCopy.Close()
-	coll := mgoDB.With(sessionCopy).C(COLLNAME_SRCNEWS)
+	coll := mgoDB.With(sessionCopy).C(COLLNAME_NEWS_SRC)
 
 	var data bson.M
 	err := coll.Find(where).One(&data)

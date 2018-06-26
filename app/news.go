@@ -426,7 +426,7 @@ func showNewsDetail(_ctx echo.Context) error {
 
 	ctx.model["item"] = &data
 
-	coll = mgoDB.With(sessionCopy).C(COLLNAME_SRCNEWS)
+	coll = mgoDB.With(sessionCopy).C(COLLNAME_NEWS_SRC)
 	var nsrcData bson.M
 	err = coll.Find(bson.M{"newsitem_id":data.NewsId}).Select(bson.M{"news_content":1}).One(&nsrcData)
 	if err != nil {
