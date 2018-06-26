@@ -136,9 +136,37 @@ func _ensureSingleColumnUniqueIndex(collname string, fieldName string) {
 
 func ensureMongoIndices() {
 
-	coll := mgoDB.With(mgoSession).C(COLLNAME_NEWS_SRC)
-	err := coll.EnsureIndex(mgo.Index{
-		Key: []string{"insert_dt"},
+	coll := mgoDB.With(mgoSession).C(COLLNAME_USER)
+	//admin-test 계정 생성
+	var user AdminUser
+	user.CreatedAt = NewJsonNow()
+	user.LoginId = "admin"
+	user.Passwd.Data = encodePasswd("test")
+	user.Name = "admin-test"
+	user.Email = ""
+	user.Phone = ""
+	user.Level = 9;
+	user.Roles = []string{}
+	err := coll.Insert(user)
+	if err != nil {
+		panic(err)
+	}
+
+	coll = mgoDB.With(mgoSession).C(COLLNAME_NEWS)
+	err = coll.EnsureIndex(mgo.Index{
+		Key: []string{"newsId", "insertDt", "clusterNewsId"},
+		Unique: true,
+		DropDups: false,
+		Background: true,
+		Sparse: true,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	coll = mgoDB.With(mgoSession).C(COLLNAME_NEWS_SRC)
+	err = coll.EnsureIndex(mgo.Index{
+		Key: []string{"insert_dt", "newsitem_id"},
 		Unique: false,
 		DropDups: false,
 		Background: true,
@@ -172,18 +200,6 @@ func ensureMongoIndices() {
 		panic(err)
 	}
 
-	coll = mgoOldDB.With(mgoSession).C(COLLNAME_YEAR1NEWS)
-	err = coll.EnsureIndex(mgo.Index{
-		Key: []string{"date"},
-		Unique: false,
-		DropDups: false,
-		Background: true,
-		Sparse: true,
-	})
-	if err != nil {
-		panic(err)
-	}
-
 	coll = mgoDB.With(mgoSession).C(COLLNAME_POSDIC)
 	err = coll.EnsureIndex(mgo.Index{
 		Key: []string{ "word", "pos" },
@@ -195,19 +211,6 @@ func ensureMongoIndices() {
 	if err != nil {
 		panic(err)
 	}
-
-	/*coll = mgoDB.With(mgoSession).C(COLLNAME_APITEST)
-	err = coll.EnsureIndex(mgo.Index{
-		Key: []string{ "ts" },
-		Unique: false,
-		DropDups: false,
-		Background: true,
-		Sparse: true,
-	})
-	if err != nil {
-		panic(err)
-	}*/
-	
 }
 
 func openMongoDB(config *AppConfig) bool {
