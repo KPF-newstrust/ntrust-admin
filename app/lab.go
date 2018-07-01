@@ -467,6 +467,7 @@ func apiPostLabNew(_ctx echo.Context, dtype string) error {
 
 	data.RequestedAt = time.Now()
 	data.Id = bson.NewObjectId()
+	data.UserId = ctx.authUserId
 
 	sessionCopy := mgoSession.Copy()
 	defer sessionCopy.Close()
