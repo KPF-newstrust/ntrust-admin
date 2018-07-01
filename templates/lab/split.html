@@ -1,5 +1,5 @@
 {{extends "layout_admin.html"}}
-{{block title()}}문장 분리{{end}}
+{{block title()}}문장 분리 및 군더더기 제거{{end}}
 {{block localCSS()}}
 <style>
 .news_content {
@@ -15,7 +15,7 @@
 {{end}}
 
 {{block chead()}}
-<h1>문장 분리
+<h1>문장 분리 및 군더더기 제거
 {{ if .data.Id == "" }}
 	<small>문장 단위로 나눌 본문(문단)을 입력하십시오.</small>
 {{ end }}	

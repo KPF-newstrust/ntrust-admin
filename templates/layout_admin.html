@@ -142,7 +142,7 @@
 -->
 				<li class="treeview{{ if hasPrefix(.lmenu,"t3") }} active{{ end }}">
 					<a href="#">
-						<i class="fa fa-newspaper-o"></i> <span>뉴스 기사</span>
+						<i class="fa fa-newspaper-o"></i> <span>뉴스</span>
 						<i class="fa fa-angle-left pull-right"></i>
 					</a>
 					<ul class="treeview-menu">
@@ -155,7 +155,7 @@
 						<li{{ if .lmenu == "t3f" }} class="active"{{ end }}><a href="/admin/assess/list"><i class="fa fa-circle-o"></i> 기사 평가</a></li>
 						<li{{ if .lmenu == "t3g" }} class="active"{{ end }}><a href="/admin/cluster/list" onclick="showWaitIndi()"><i class="fa fa-circle-o"></i> 뉴스 클러스터링</a></li>
 {{ else }}
-						<li{{ if .lmenu == "t3c" }} class="active"{{ end }}><a href="/admin/news/list"><i class="fa fa-circle-o"></i> 기사 목록 </a></li>
+						<li{{ if .lmenu == "t3c" }} class="active"{{ end }}><a href="/admin/news/list"><i class="fa fa-circle-o"></i> 뉴스 기사 </a></li>
 						<li{{ if .lmenu == "t3g" }} class="active"{{ end }}><a href="/admin/cluster/list" onclick="showWaitIndi()"><i class="fa fa-circle-o"></i> 뉴스 클러스터링</a></li>
 {{ end }}
 					</ul>
@@ -185,9 +185,9 @@
 					<ul class="treeview-menu">
 						<li{{ if .lmenu == "t8z" }} class="active"{{ end }}><a href="/admin/lab/intro"><i class="fa fa-info-circle"></i> API 소개</a></li>
 						<li{{ if .lmenu == "t8a" }} class="active"{{ end }}><a href="/admin/lab/list"><i class="fa fa-list"></i> 테스트 내역</a></li>
-						<li{{ if .lmenu == "t8b" }} class="active"{{ end }}><a href="/admin/lab/split"><i class="fa fa-circle-o"></i> 문장 분리</a></li>
+						<li{{ if .lmenu == "t8b" }} class="active"{{ end }}><a href="/admin/lab/split"><i class="fa fa-circle-o"></i> 문장 분리 및 군더더기 제거 </a></li>
 						<li{{ if .lmenu == "t8c" }} class="active"{{ end }}><a href="/admin/lab/postag"><i class="fa fa-circle-o"></i> 형태소 분석</a></li>
-						<li{{ if .lmenu == "t8d" }} class="active"{{ end }}><a href="/admin/lab/sanitize"><i class="fa fa-circle-o"></i> 본문 전처리</a></li>
+						<!--<li{{ if .lmenu == "t8d" }} class="active"{{ end }}><a href="/admin/lab/sanitize"><i class="fa fa-circle-o"></i> 본문 전처리</a></li>-->
 						<!--<li{{ if .lmenu == "t8e" }} class="active"{{ end }}><a href="/admin/lab/metric"><i class="fa fa-circle-o"></i> 계량 요인 추출</a></li>-->
 						<li{{ if .lmenu == "t8f" }} class="active"{{ end }}><a href="/admin/lab/trust"><i class="fa fa-circle-o"></i> 저널리즘 가치 점수화</a></li>
 						<li{{ if .lmenu == "t8g" }} class="active"{{ end }}><a href="/admin/lab/integrate"><i class="fa fa-tasks"></i> 통합 평가</a></li>
