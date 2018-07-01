@@ -100,6 +100,7 @@ var (
 	amqpConn *amqp.Connection
 	amqpChn *amqp.Channel
 	amQueue_Task amqp.Queue
+	amqpCloseError chan *amqp.Error
 	//amQueue_Notice amqp.Queue
 
 	localCache *cache.Cache
@@ -216,7 +217,7 @@ func ensureMongoIndices() {
 func openMongoDB(config *AppConfig) bool {
 	var err error
 
-	fmt.Printf("MongoDB DSN=%s\n", config.DsnMongo)
+	log.Printf("MongoDB DSN=%s\n", config.DsnMongo)
 	mgoSession, err = mgo.Dial(config.DsnMongo)
 	if err != nil {
 		log.Printf("MongoDB connect failed: %s\n", err.Error())
@@ -276,6 +277,53 @@ func openRabbitMQ(config *AppConfig) bool {
 	}
 
 	return true
+}
+
+func connectToRabbitMQ(uri string) *amqp.Connection {
+	for {
+		conn, err := amqp.Dial(uri)
+		if err == nil {
+			return conn
+		}
+
+		log.Println(err)
+		log.Printf("Trying to reconnect to RabbitMQ at %s\n", uri)
+		time.Sleep(10000 * time.Millisecond)
+	}
+}
+
+func rabbitConnector(uri string) {
+	var rabbitErr *amqp.Error
+	var err error
+
+	for {
+		rabbitErr = <-amqpCloseError
+		if rabbitErr != nil {
+			amqpConn = connectToRabbitMQ(uri)
+			amqpCloseError = make(chan *amqp.Error)
+			amqpConn.NotifyClose(amqpCloseError)
+			log.Printf("RabbitMQ DSN=%s\n", uri)
+
+			amqpChn, err = amqpConn.Channel()
+			if err != nil {
+				log.Printf("AMQP Channel open failed: %v\n", err)
+				//return false
+			}
+
+			amQueue_Task, err = amqpChn.QueueDeclare(
+				"task",	// name
+				true,	// durable
+				false,	// delete when unused
+				false,	// exclusive
+				false,	// no-wait
+				nil,	// arguments
+			)
+			if err != nil {
+				log.Printf("QueueDeclare(task) failed: %v", err)
+				//return false
+			}
+		}
+	}
 }
 
 func mqSend_Task(cmd string, ver int, data bson.M) error {
@@ -344,13 +392,13 @@ func Setup(ec *echo.Echo, config *AppConfig) bool {
 		return false
 	}
 
-	if !openRabbitMQ(config) {
-		return false
-	}
-	
+	amqpCloseError = make(chan *amqp.Error)
+	go rabbitConnector(config.DsnAmqp)
+	amqpCloseError <- amqp.ErrClosed
+
 	// Redis
 	// check https://github.com/soveran/redisurl/blob/master/redisurl.go
-	fmt.Printf("Redis DSN=%s\n", config.DsnRedis)
+	log.Printf("Redis DSN=%s\n", config.DsnRedis)
 	redisUrl, err := url.Parse(config.DsnRedis)
 	rdsPool = redis.NewPool(func() (redis.Conn, error) {
 		rdconn, err := redis.Dial("tcp", redisUrl.Host)
