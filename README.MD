@@ -1,34 +1,8 @@
-## go 설치
-https://golang.org/dl/
-
-## gopath 설정
-$ vi ~/.vash_profile
+모든 시스템은 [도커](https://www.docker.com/) 환경 위에서 구현됩니다. 도커를 설치한 후 아래 명령어로 배포합니다.
 ```
-#add
-export PATH = $PATH:/usr/local/go/bin
-export GOPATH = /Users/ben/.go
-```
-$ cd /Users/ben  
-$ mkdir .go && cd .go && mkdir src  
-$ .source ~/.bash_profile  
-$ echo $GOPATH
-
-## 서버 설정
-* config.toml에 각종 서버 설정이 정리되어 있고, 내용은 모두 임의의 값입니다.
-* mongodb, redis, rabbitmq 등을 연동하고 있으며 해당 서버들은 직접 구성한 서버에 맞게 작성해서 연동해야 합니다.
-
-## 프로젝트 실행
-gopath 링크
-```
-$ ln -s `pwd` $GOPATH/src/ntrust_admin
+docker-compose up
 ```
 
-패키지 설치
-```
-$ go get -u ntrust_admin
-```
-
-실행
-```
-$ go run main.go (--dev)
-```
+1. admin 외에 rabbitmq, mongo, redis 등이 모두 함께 실행됩니다.
+2. 도커 컨테이너가 실행되면 `{호스트}:50000`로 접속 가능합니다.
+3. 초기 관리자계정 로그인은 `admin / test`로 가능합니다.
