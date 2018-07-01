@@ -243,6 +243,8 @@ func main() {
 			ec.Static("/public", "static")
 		}		
 	}
+
+	ec.Static("/robots.txt", "static/robots.txt")
 	
 	if !app.Setup(ec, &config) {
 		log.Println("App server setup failed.")
