@@ -12,7 +12,7 @@ tfoot {
     display: table-header-group;
 }
 .dataTables_filter {
-    display: none; 
+    display: none;
 }
 </style>
 {{end}}
@@ -39,16 +39,16 @@ tfoot {
 					<th><input type="text" placeholder="언론사 필터" data-column="1"></th>
 					<th><select data-column="2">
                         <option></option>
-						<option>문화 예술</option>
+						<option>정치</option>
 						<option>경제</option>
-						<option>교육</option>
-						<option>연예</option>
+						<option>사회</option>
 						<option>국제</option>
+						<option>문화 예술</option>
 						<option>IT 과학</option>
 						<option>라이프스타일</option>
-						<option>정치</option>
-						<option>사회</option>
 						<option>스포츠</option>
+						<option>교육</option>
+						<option>연예</option>
 						<option>기타</option>
                     </select></th>
 					<th><input type="text" placeholder="제목 필터" data-column="3"></th>
@@ -108,10 +108,10 @@ $(function () {
             }
         ]
 	})
-	
+
 	jqdt.columns().every(function () {
         var that = this;
- 
+
         $( 'input', this.footer() ).on( 'keyup change', function () {
             if ( that.search() !== this.value ) {
                 that.search(this.value).draw();
@@ -124,7 +124,7 @@ $(function () {
             }
         });
 	});
-	
+
 	hideWaitIndi();
 });
 </script>
